@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AppLED</string>
+    <string name="colors_rbg_section_title">Colors RGB</string>
+    <string name="devices_section_title">Devices</string>
+    <string name="title_section3">Section 3</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
