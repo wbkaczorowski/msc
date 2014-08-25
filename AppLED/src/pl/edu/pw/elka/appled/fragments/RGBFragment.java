@@ -44,9 +44,7 @@ public class RGBFragment extends Fragment {
         greenSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
         blueSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
 
-        
         updateColor(chosenColor);
-
         return rootView;
     }
 
@@ -54,6 +52,7 @@ public class RGBFragment extends Fragment {
         pickedColorCode.setText("#" + Integer.toHexString(color).substring(2));
         pickedColorViewer.updateColor(color);
         pickedColorViewer.invalidate();
+        //TODO wysyłanie do raspberry tutaj?
     }
 
     private class ColorOnSeekBarChangeListener implements OnSeekBarChangeListener {

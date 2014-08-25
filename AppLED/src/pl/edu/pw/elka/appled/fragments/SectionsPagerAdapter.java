@@ -14,14 +14,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     
     
     private SparseArray<String> fragmentNames;
-    private final int fragmentsNumber = 3;
+    private final int fragmentsNumber = 2;
 
     public SectionsPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         fragmentNames = new SparseArray<String>();
         fragmentNames.put(0, context.getString(R.string.colors_rbg_fragment));
         fragmentNames.put(1, context.getString(R.string.devices_section_title));
-        fragmentNames.put(2, context.getString(R.string.title_section3));
         
     }
 

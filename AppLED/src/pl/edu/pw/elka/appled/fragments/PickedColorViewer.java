@@ -13,6 +13,8 @@ public class PickedColorViewer extends View {
 
     private Paint paint;
     private Rect rect;
+    private int shapeSize;
+//    private float roundShape;
 
     public PickedColorViewer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -30,8 +32,9 @@ public class PickedColorViewer extends View {
     }
 
     private void init(Context context) {
-        rect = new Rect(0, 0, (int) Utils.convertDpToPixel(getResources().getDimension(R.dimen.picked_color_viever_size), context),
-                (int) Utils.convertDpToPixel(getResources().getDimension(R.dimen.picked_color_viever_size), context));
+        shapeSize = (int) Utils.convertDpToPixel(getResources().getDimension(R.dimen.picked_color_viever_size), context);
+//        roundShape = Utils.convertDpToPixel(getResources().getDimension(R.dimen.picked_color_viever_round), context);
+        rect = new Rect(0, 0, shapeSize, shapeSize);
     }
 
     public void updateColor(int color) {
