@@ -1,49 +1,49 @@
 package pl.edu.pw.elka.appled.fragments;
 
-import java.util.Locale;
-
 import pl.edu.pw.elka.appled.R;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.util.SparseArray;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the sections/tabs/pages.
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
     
-    private Context context;
+    
+    private SparseArray<String> fragmentNames;
+    private final int fragmentsNumber = 3;
 
     public SectionsPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
-        this.context = context;
+        fragmentNames = new SparseArray<String>();
+        fragmentNames.put(0, context.getString(R.string.colors_rbg_fragment));
+        fragmentNames.put(1, context.getString(R.string.devices_section_title));
+        fragmentNames.put(2, context.getString(R.string.title_section3));
+        
     }
 
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        return PlaceholderFragment.newInstance(position + 1);
+
+        switch (position) {
+        case 0:
+            return new RGBFragment();
+            
+        default:
+            return DefaultFragment.newInstance(position + 1);
+        }
     }
 
     @Override
     public int getCount() {
-        // Show 3 total pages.
-        return 3;
+        return fragmentsNumber;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Locale l = Locale.getDefault();
-        switch (position) {
-        case 0:
-            return context.getString(R.string.colors_rbg_section_title).toUpperCase(l);
-        case 1:
-            return context.getString(R.string.devices_section_title).toUpperCase(l);
-        case 2:
-            return context.getString(R.string.title_section3).toUpperCase(l);
-        }
-        return null;
+        return fragmentNames.get(position);
     }
 }
