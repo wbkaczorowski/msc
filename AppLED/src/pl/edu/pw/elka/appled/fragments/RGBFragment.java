@@ -1,5 +1,6 @@
 package pl.edu.pw.elka.appled.fragments;
 
+import pl.edu.pw.elka.appled.Communicator;
 import pl.edu.pw.elka.appled.R;
 import android.app.Fragment;
 import android.graphics.Color;
@@ -14,27 +15,36 @@ import android.widget.TextView;
 public class RGBFragment extends Fragment {
 
     public static final String TAG = "RGBFragment";
+    
+    private Communicator communicator;
 
-    private int chosenColor = Color.YELLOW; // default value
-    private int red = Color.red(chosenColor);
-    private int green = Color.green(chosenColor);
-    private int blue = Color.blue(chosenColor);
-
+    private int chosenColor;
+    private int red;
+    private int green;
+    private int blue;
 
     private TextView pickedColorCode;
     private PickedColorViewer pickedColorViewer;
     private SeekBar redSeekBar;
     private SeekBar greenSeekBar;
     private SeekBar blueSeekBar;
+    
+    public RGBFragment() {
+        chosenColor = Color.YELLOW; // default value
+        red = Color.red(chosenColor);
+        green = Color.green(chosenColor);
+        blue = Color.blue(chosenColor);
+        communicator = new Communicator();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.rgb_fragment, container, false);
         pickedColorViewer = (PickedColorViewer) rootView.findViewById(R.id.picked_color_view);
         pickedColorCode = (TextView) rootView.findViewById(R.id.picked_color_code);
-        redSeekBar = (SeekBar) rootView.findViewById(R.id.redSeekBar);
-        greenSeekBar = (SeekBar) rootView.findViewById(R.id.greenSeekBar);
-        blueSeekBar = (SeekBar) rootView.findViewById(R.id.blueSeekBar);
+        redSeekBar = (SeekBar) rootView.findViewById(R.id.red_seek_bar);
+        greenSeekBar = (SeekBar) rootView.findViewById(R.id.green_seek_bar);
+        blueSeekBar = (SeekBar) rootView.findViewById(R.id.blue_seek_bar);
 
         redSeekBar.setProgress(red);
         greenSeekBar.setProgress(green);
@@ -53,6 +63,7 @@ public class RGBFragment extends Fragment {
         pickedColorViewer.updateColor(color);
         pickedColorViewer.invalidate();
         //TODO wysyłanie do raspberry tutaj?
+        communicator.sendData("#" + Integer.toHexString(color).substring(2));
     }
 
     private class ColorOnSeekBarChangeListener implements OnSeekBarChangeListener {

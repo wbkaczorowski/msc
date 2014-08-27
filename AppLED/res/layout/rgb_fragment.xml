@@ -29,39 +29,39 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/redSeekBarText"
+        android:id="@+id/red_seek_bar_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/red" />
 
     <SeekBar
-        android:id="@+id/redSeekBar"
+        android:id="@+id/red_seek_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="255"
         />
 
     <TextView
-        android:id="@+id/greenSeekBarText"
+        android:id="@+id/green_seek_bar_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/green" />
 
     <SeekBar
-        android:id="@+id/greenSeekBar"
+        android:id="@+id/green_seek_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="255"
         />
 
     <TextView
-        android:id="@+id/blueSeekBarText"
+        android:id="@+id/blue_seek_bar_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/blue" />
 
     <SeekBar
-        android:id="@+id/blueSeekBar"
+        android:id="@+id/blue_seek_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="255"
