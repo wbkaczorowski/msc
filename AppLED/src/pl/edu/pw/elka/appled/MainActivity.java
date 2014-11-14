@@ -1,5 +1,6 @@
 package pl.edu.pw.elka.appled;
 
+import pl.edu.pw.elka.appled.communication.Communicator;
 import pl.edu.pw.elka.appled.fragments.SectionsPagerAdapter;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -15,6 +16,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
     ViewPager mViewPager;
 
+    Communicator communicator = new Communicator();
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,10 +25,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), getApplicationContext());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), getApplicationContext(), communicator);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -50,6 +54,17 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
         }
     }
+    
+    
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //TODO te polaczenia w zyciu activity lepiej zadbac
+        communicator.disconnectAll();
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

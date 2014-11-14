@@ -1,10 +1,11 @@
 package pl.edu.pw.elka.appled.fragments;
 
-import pl.edu.pw.elka.appled.Communicator;
 import pl.edu.pw.elka.appled.R;
+import pl.edu.pw.elka.appled.communication.Communicator;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +30,13 @@ public class RGBFragment extends Fragment {
     private SeekBar greenSeekBar;
     private SeekBar blueSeekBar;
     
-    public RGBFragment() {
+    public RGBFragment(Communicator communicator) {
+        //TODO na taki jaki jest na rpi 
         chosenColor = Color.YELLOW; // default value
         red = Color.red(chosenColor);
         green = Color.green(chosenColor);
         blue = Color.blue(chosenColor);
-        communicator = new Communicator();
+        this.communicator = communicator;
     }
 
     @Override

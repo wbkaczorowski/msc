@@ -1,6 +1,7 @@
 package pl.edu.pw.elka.appled.fragments;
 
 import pl.edu.pw.elka.appled.R;
+import pl.edu.pw.elka.appled.communication.Communicator;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +19,12 @@ public class DevicesFragment extends Fragment {
 
     private Button allDevicesButton;
     private Button noDevicesButton;
+    
+    private Communicator communicator;
+    
+    public DevicesFragment(Communicator communicator) {
+        this.communicator = communicator;
+    }
     
     
     @Override
@@ -42,7 +49,8 @@ public class DevicesFragment extends Fragment {
             }
         });
         
-        
+        // TODO tez tak tymczasowo postawione
+        communicator.connect();
         
         return rootView;
     }

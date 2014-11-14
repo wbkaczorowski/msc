@@ -6,6 +6,7 @@ import select
 import Queue
 from threading import Thread
 import sys
+import commands
  
 class ProcessThread(Thread):
     def __init__(self):
@@ -44,11 +45,11 @@ def process(value):
  
 def main():
     s = socket.socket()
-    host = "192.168.1.14"
+    host = commands.getoutput("hostname -I")
     port = 8234
     s.bind((host, port))
  
-    print ">>> Server listening on port {p}...".format(p=port)
+    print ">>> Server {h} listening on port {p}...".format(h=host, p=port)
  
     s.listen(5)                 # Now wait for client connection.
  
