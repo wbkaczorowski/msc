@@ -32,7 +32,7 @@ public class RGBFragment extends Fragment {
     
     public RGBFragment(Communicator communicator) {
         //TODO na taki jaki jest na rpi 
-        chosenColor = Color.YELLOW; // default value
+        chosenColor = Color.GRAY; // default value
         red = Color.red(chosenColor);
         green = Color.green(chosenColor);
         blue = Color.blue(chosenColor);
