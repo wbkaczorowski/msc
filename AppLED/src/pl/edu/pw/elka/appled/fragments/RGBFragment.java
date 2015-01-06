@@ -65,7 +65,7 @@ public class RGBFragment extends Fragment {
         pickedColorViewer.updateColor(color);
         pickedColorViewer.invalidate();
         //TODO wysyłanie do raspberry tutaj?
-        communicator.sendData("#" + Integer.toHexString(color).substring(2));
+        communicator.sendData(Integer.toHexString(color).substring(2));
     }
 
     private class ColorOnSeekBarChangeListener implements OnSeekBarChangeListener {

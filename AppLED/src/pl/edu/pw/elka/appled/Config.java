@@ -17,6 +17,6 @@ public class Config {
      * Ip address of controllers. TEMP
      * TODO usunuac
      */
-    public static final String RPI_IP = "192.168.1.14";
+    public static final String RPI_IP = "192.168.1.107";
 
 }
