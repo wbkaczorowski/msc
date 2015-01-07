@@ -68,6 +68,7 @@ public class RGBFragment extends Fragment {
         communicator.sendData(Integer.toHexString(color).substring(2));
     }
 
+    
     private class ColorOnSeekBarChangeListener implements OnSeekBarChangeListener {
 
         @Override

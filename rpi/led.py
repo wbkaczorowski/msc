@@ -7,7 +7,7 @@ class LEDController(object):
     BLUE_PIN = 25
 
     def __init__(self):
-        self.current_RGB = "000000"
+        self.current_RGB = "ffaacc"
         self.red = 0
         self.green = 0
         self.blue = 0
@@ -28,7 +28,7 @@ class LEDController(object):
         # self.servo.stop_servo(self.RED_PIN)
         # self.servo.stop_servo(self.GREEN_PIN)
         # self.servo.stop_servo(self.BLUE_PIN)
-        print "led stop"
+        print "LEDs stoped"
 
 
     def rgb_hex_string(self):

@@ -3,6 +3,8 @@ package pl.edu.pw.elka.appled.communication;
 import java.util.LinkedList;
 
 import pl.edu.pw.elka.appled.Config;
+import pl.edu.pw.elka.appled.fragments.RGBFragment;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import de.tavendo.autobahn.WebSocketConnection;
@@ -53,6 +55,7 @@ public class Communicator {
 
     private class ConnectDataTask extends AsyncTask<String, Void, Void> {
 
+        
         @Override
         protected Void doInBackground(String... params) {
             String data = params[0];
@@ -64,7 +67,7 @@ public class Communicator {
 
         public WebSocketConnection startSingleConnction(final String wsUri) {
             WebSocketConnection connection = new WebSocketConnection();
-
+            
             try {
                 connection.connect(wsUri, new WebSocketHandler() {
 
@@ -76,6 +79,7 @@ public class Communicator {
                     @Override
                     public void onTextMessage(String payload) {
                         Log.d(TAG, "Recieved message: " + payload);
+                        // TODO ustawianie tego?
                     }
 
                     @Override
@@ -88,7 +92,8 @@ public class Communicator {
             }
             return connection;
         }
-
+        
+   
         public void startMultipleConnections() {
             // TODO przygotować na wiele
         }
