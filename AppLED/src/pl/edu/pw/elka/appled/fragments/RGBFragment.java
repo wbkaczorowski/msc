@@ -64,7 +64,8 @@ public class RGBFragment extends Fragment {
         pickedColorCode.setText("#" + Integer.toHexString(color).substring(2));
         pickedColorViewer.updateColor(color);
         pickedColorViewer.invalidate();
-        //TODO wysyłanie do raspberry tutaj?
+        //TODO wysyłanie tutaj?
+        //TODO a może nie wysyłac wszystkich tylko co x ms?
         communicator.sendData(Integer.toHexString(color).substring(2));
     }
 

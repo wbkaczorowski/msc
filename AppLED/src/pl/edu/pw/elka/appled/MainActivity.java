@@ -16,8 +16,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
     ViewPager mViewPager;
 
-    Communicator communicator = new Communicator();
-    
+    Communicator communicator = new Communicator(this);
+
+    public static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +27,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -53,18 +54,17 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             // this tab is selected.
             actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
         }
+
     }
-    
-    
+
+
 
     @Override
     protected void onStop() {
         super.onStop();
-        //TODO te polaczenia w zyciu activity lepiej zadbac
+        // TODO te polaczenia w zyciu activity lepiej zadbac
         communicator.disconnectAll();
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

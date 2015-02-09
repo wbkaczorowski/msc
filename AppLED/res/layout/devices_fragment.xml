@@ -4,27 +4,36 @@
     android:layout_height="match_parent" >
 
     <Button
-        android:id="@+id/all_devices_button"
+        android:id="@+id/search_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="@string/all_devices" />
+        android:text="@string/search_button" />
+    
+<!--     <Button -->
+<!--         android:id="@+id/all_devices_button" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:layout_toRightOf="@+id/search_button" -->
+<!--         android:layout_alignParentTop="true" -->
+<!--         android:text="@string/all_devices" /> -->
 
-    <Button
-        android:id="@+id/no_devices_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/all_devices_button"
-        android:text="@string/no_devices" />
+<!--     <Button -->
+<!--         android:id="@+id/no_devices_button" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:layout_alignParentTop="true" -->
+<!--         android:layout_toRightOf="@+id/all_devices_button" -->
+<!--         android:text="@string/no_devices" /> -->
 
     <ListView
         android:id="@+id/devices_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/all_devices_button" >
+        android:layout_below="@+id/search_button" >
     </ListView>
 
 </RelativeLayout>

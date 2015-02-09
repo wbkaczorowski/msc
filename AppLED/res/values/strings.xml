@@ -10,5 +10,8 @@
     <string name="blue">Blue</string>
     <string name="all_devices">All devices</string>
     <string name="no_devices">No devices</string>
+    <string name="search_button">Search devices</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
 
 </resources>

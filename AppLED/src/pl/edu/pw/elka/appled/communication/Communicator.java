@@ -1,10 +1,10 @@
 package pl.edu.pw.elka.appled.communication;
 
 import java.util.LinkedList;
+import java.util.Map;
 
-import pl.edu.pw.elka.appled.Config;
-import pl.edu.pw.elka.appled.fragments.RGBFragment;
-import android.graphics.Color;
+import pl.edu.pw.elka.appled.fragments.DeviceRowAdapter;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import de.tavendo.autobahn.WebSocketConnection;
@@ -12,22 +12,33 @@ import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
 
 public class Communicator {
+   
+    private Context context;
 
     public static final String TAG = "Communicator";
+    
+    
+    public Communicator(Context context) {
+        this.context = context;
+    }
 
     // TODO to żeby w threadpoola puścic jakiegoś
     private LinkedList<WebSocketConnection> connectedDevices = new LinkedList<>();
 
     public void connect() {
-        new ConnectDataTask().execute("ws://" + Config.RPI_IP + ":" + Config.PORT);
+//        new ConnectDataTask().execute("ws://" + Config.RPI_IP + ":" + Config.PORT);
     }
 
     public void sendData(String data) {
-        new SendDataTask().execute(data);
+//        new SendDataTask().execute(data);
     }
 
     public void disconnectAll() {
-        new DisconnectAsyncTask().execute();
+//        new DisconnectAsyncTask().execute();
+    }
+    
+    public ServerFinderTask getServerFinderTask(DeviceRowAdapter adapter) {
+        return new ServerFinderTask(this.context, adapter);
     }
 
     // TODO pozmieniać asynki to wszystko (threadpool jakiś?)
