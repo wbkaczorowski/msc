@@ -66,7 +66,7 @@ public class DevicesFragment extends Fragment {
         // });
 
         listView = (ListView) rootView.findViewById(R.id.devices_list_view);
-        adapter = new DeviceRowAdapter(getActivity().getApplicationContext());
+        adapter = new DeviceRowAdapter(getActivity().getApplicationContext(), communicator);
         listView.setAdapter(adapter);
         return rootView;
     }

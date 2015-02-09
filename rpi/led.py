@@ -1,5 +1,7 @@
 # from RPIO import PWM
 
+# TODO rozjebane w bizde to to
+# inne pwm obczaic?
 
 class LEDController(object):
     RED_PIN = 23
@@ -13,6 +15,10 @@ class LEDController(object):
         self.blue = 0
         # self.servo = PWM.Servo()
 
+        # PWM.setup()
+        # PWM.init_channel(3, 255 * 30)
+        # PWM.init_channel(4, 255*20)
+
 
     def update_rgb(self, rgb_string_value):
         self.red = self.get_red_value(rgb_string_value)
@@ -21,14 +27,19 @@ class LEDController(object):
         self.current_RGB = self.rgb_hex_string()
 
         self.update_red()
-        self.update_green()
-        self.update_blue()
+        # self.update_green()
+        # self.update_blue()
 
     def stop(self):
         # self.servo.stop_servo(self.RED_PIN)
         # self.servo.stop_servo(self.GREEN_PIN)
         # self.servo.stop_servo(self.BLUE_PIN)
+
+        # PWM.clear_channel_gpio(3, self.RED_PIN)
+        # PWM.clear_channel_gpio(4, self.GREEN_PIN)
+        # PWM.cleanup()
         print "LEDs stoped"
+
 
 
     def rgb_hex_string(self):
@@ -36,15 +47,22 @@ class LEDController(object):
 
     # TODO te wartosci poprawic
     def update_red(self):
+        print "red: ", self.red
+
+        # PWM.add_channel_pulse(3, self.RED_PIN, 0, self.red * 2)
         # self.servo.set_servo(self.RED_PIN, round(self.red * 78, -1))
+
         print "red: ", round(self.red * 78, -1)
 
     def update_green(self):
+        # PWM.add_channel_pulse(4, self.GREEN_PIN, 0, self.green*2)
+        print "green: ",  self.green
+
         # self.servo.set_servo(self.GREEN_PIN, round(self.green * 78, -1))
         print "green: ",  round(self.green * 78, -1)
 
     def update_blue(self):
-        # self.servo.set_servo(self.BLUE_PIN, round(self.blue * 78, -1))
+        self.servo.set_servo(self.BLUE_PIN, round(self.blue * 78, -1))
         print "blue: ", round(self.blue * 78, -1)
 
 

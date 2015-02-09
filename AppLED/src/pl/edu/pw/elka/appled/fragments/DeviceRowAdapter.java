@@ -3,9 +3,11 @@ package pl.edu.pw.elka.appled.fragments;
 import java.util.LinkedHashMap;
 
 import pl.edu.pw.elka.appled.R;
+import pl.edu.pw.elka.appled.communication.Communicator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
@@ -16,9 +18,11 @@ public class DeviceRowAdapter extends BaseAdapter {
     private LinkedHashMap<String, String> data = new LinkedHashMap<String, String>();
     private String[] keys;
     private Context context;
+    private Communicator communicator;
 
-    public DeviceRowAdapter(Context context) {
+    public DeviceRowAdapter(Context context, Communicator communicator) {
         this.context = context;
+        this.communicator = communicator;
     }
 
     @Override
@@ -41,13 +45,10 @@ public class DeviceRowAdapter extends BaseAdapter {
         this.keys = data.keySet().toArray(new String[data.size()]);
     }
     
-    public void addData(String key, String value) {
-        
-    }
 
     @Override
     public View getView(int pos, View convertView, ViewGroup parent) {
-        String key = keys[pos];
+        final String key = keys[pos];
         String value = (String) getItem(pos);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -56,7 +57,18 @@ public class DeviceRowAdapter extends BaseAdapter {
         TextView deviceIPText = (TextView) rowView.findViewById(R.id.device_IP_text);
         deviceNameText.setText(value);
         deviceIPText.setText(key);
-        ToggleButton connectButton = rowView.findViewById(R.id.connect_button);
+        final ToggleButton connectButton = (ToggleButton) rowView.findViewById(R.id.connect_button);
+        connectButton.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                if (connectButton.isChecked()) {
+                    communicator.connect(key);
+                } else {
+                    communicator.disconnect(key);
+                }
+            }
+        });
        
 
         return rowView;

@@ -19,11 +19,6 @@ public class Config {
      */
     public static final int BROADCAST_PORT = 9001;
     
-    /**
-     * Ip address of controllers. TEMP
-     * TODO usunuac
-     */
-//    public static final String RPI_IP = "192.168.1.14";
 
     /**
      * Time in ms for discovery of controllers.

@@ -1,42 +1,50 @@
 package pl.edu.pw.elka.appled.communication;
 
 import java.util.LinkedList;
-import java.util.Map;
 
+import pl.edu.pw.elka.appled.Config;
 import pl.edu.pw.elka.appled.fragments.DeviceRowAdapter;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
 
 public class Communicator {
-   
+
     private Context context;
 
     public static final String TAG = "Communicator";
-    
-    
-    public Communicator(Context context) {
-        this.context = context;
-    }
 
     // TODO to żeby w threadpoola puścic jakiegoś
     private LinkedList<WebSocketConnection> connectedDevices = new LinkedList<>();
 
-    public void connect() {
-//        new ConnectDataTask().execute("ws://" + Config.RPI_IP + ":" + Config.PORT);
+    public Communicator(Context context) {
+        this.context = context;
+    }
+
+    public void connect(String key) {
+        new ConnectDataTask().execute("ws://" + key + ":" + Config.PORT);
+    }
+
+    public void disconnect(String key) {
+        new DisconnectSingleAsyncTask().execute(key);
     }
 
     public void sendData(String data) {
-//        new SendDataTask().execute(data);
+        if (connectedDevices.isEmpty()) {
+            Toast.makeText(context, "No connected devices!", Toast.LENGTH_SHORT).show();
+        } else {
+            new SendDataTask().execute(data);
+        }
     }
 
     public void disconnectAll() {
-//        new DisconnectAsyncTask().execute();
+        new DisconnectAllAsyncTask().execute();
     }
-    
+
     public ServerFinderTask getServerFinderTask(DeviceRowAdapter adapter) {
         return new ServerFinderTask(this.context, adapter);
     }
@@ -66,7 +74,6 @@ public class Communicator {
 
     private class ConnectDataTask extends AsyncTask<String, Void, Void> {
 
-        
         @Override
         protected Void doInBackground(String... params) {
             String data = params[0];
@@ -78,7 +85,7 @@ public class Communicator {
 
         public WebSocketConnection startSingleConnction(final String wsUri) {
             WebSocketConnection connection = new WebSocketConnection();
-            
+
             try {
                 connection.connect(wsUri, new WebSocketHandler() {
 
@@ -103,15 +110,32 @@ public class Communicator {
             }
             return connection;
         }
-        
-   
+
         public void startMultipleConnections() {
             // TODO przygotować na wiele
         }
 
     }
 
-    private class DisconnectAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class DisconnectSingleAsyncTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            // TODO zeby na jedym wylaczalo
+            for (WebSocketConnection wsc : connectedDevices) {
+                if (wsc.isConnected()) {
+                    wsc.disconnect();
+                }
+            }
+            connectedDevices.removeAll(connectedDevices);
+
+            return null;
+        }
+
+    }
+
+    private class DisconnectAllAsyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {

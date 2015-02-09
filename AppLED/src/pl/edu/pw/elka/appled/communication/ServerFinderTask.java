@@ -26,9 +26,6 @@ public class ServerFinderTask extends AsyncTask<Void, Void, Map<String, String>>
         this.adapter = adapter;
     }
 
-    public void find() {
-        // new ServerFinder().execute();
-    }
 
     @Override
     protected Map<String, String> doInBackground(Void... params) {
@@ -64,7 +61,7 @@ public class ServerFinderTask extends AsyncTask<Void, Void, Map<String, String>>
         super.onPostExecute(result);
         adapter.setData((LinkedHashMap<String, String>) result);
         adapter.notifyDataSetChanged();
-        Log.d(TAG, result.toString());
+//        Log.d(TAG, result.toString());
     }
 
     public MulticastLock getMulticastLock() {

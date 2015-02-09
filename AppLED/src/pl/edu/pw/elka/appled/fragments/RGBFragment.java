@@ -56,14 +56,18 @@ public class RGBFragment extends Fragment {
         greenSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
         blueSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
 
-        updateColor(chosenColor);
+        updateColorInApp(chosenColor);
         return rootView;
     }
 
-    public void updateColor(int color) {
+    public void updateColorInApp(int color) {
         pickedColorCode.setText("#" + Integer.toHexString(color).substring(2));
         pickedColorViewer.updateColor(color);
         pickedColorViewer.invalidate();
+    }
+    
+    public void updateColor(int color) {
+        updateColorInApp(color);
         //TODO wysyłanie tutaj?
         //TODO a może nie wysyłac wszystkich tylko co x ms?
         communicator.sendData(Integer.toHexString(color).substring(2));
