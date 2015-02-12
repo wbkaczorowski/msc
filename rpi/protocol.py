@@ -1,8 +1,6 @@
 from autobahn.twisted.websocket import WebSocketServerProtocol
 
-
 class RPiServerProtocol(WebSocketServerProtocol):
-
 
     def onConnect(self, request):
         print("Client connecting: {0}".format(request.peer))
@@ -24,9 +22,5 @@ class RPiServerProtocol(WebSocketServerProtocol):
             self.controller.update_rgb(s)
 
 
-
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
-
-
-

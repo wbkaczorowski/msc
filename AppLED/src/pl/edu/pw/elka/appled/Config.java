@@ -23,7 +23,7 @@ public class Config {
     /**
      * Time in ms for discovery of controllers.
      */
-    public static long SCAN_TIME = 10000;
+    public static long SCAN_TIME = 8000;
     
     
 

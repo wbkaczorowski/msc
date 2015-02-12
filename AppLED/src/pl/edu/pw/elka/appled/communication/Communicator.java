@@ -16,6 +16,8 @@ public class Communicator {
 
     private Context context;
 
+    private long lastToastTime;
+
     public static final String TAG = "Communicator";
 
     // TODO to żeby w threadpoola puścic jakiegoś
@@ -23,6 +25,7 @@ public class Communicator {
 
     public Communicator(Context context) {
         this.context = context;
+        this.lastToastTime = System.currentTimeMillis();
     }
 
     public void connect(String key) {
@@ -35,7 +38,10 @@ public class Communicator {
 
     public void sendData(String data) {
         if (connectedDevices.isEmpty()) {
-            Toast.makeText(context, "No connected devices!", Toast.LENGTH_SHORT).show();
+            if (System.currentTimeMillis() - lastToastTime >= 2000) {
+                lastToastTime = System.currentTimeMillis();
+                Toast.makeText(context, "No connected devices!", Toast.LENGTH_SHORT).show();
+            }
         } else {
             new SendDataTask().execute(data);
         }
@@ -44,6 +50,7 @@ public class Communicator {
     public void disconnectAll() {
         new DisconnectAllAsyncTask().execute();
     }
+
 
     public ServerFinderTask getServerFinderTask(DeviceRowAdapter adapter) {
         return new ServerFinderTask(this.context, adapter);
@@ -152,5 +159,7 @@ public class Communicator {
         }
 
     }
+
+
 
 }
