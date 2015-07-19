@@ -9,8 +9,8 @@ typedef nx_struct SensorMoteMsg {
 
 
 enum {
-  AM_SENSOR_MOTE = 6,
-  TIMER_PERIOD_MILLI = 2000
+  AM_SENSOR_MOTE = 141,
+  TIMER_PERIOD_MILLI = 500
 };
 
 #endif /* SENSOR_MOTE_H */

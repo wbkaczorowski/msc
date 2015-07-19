@@ -6,7 +6,10 @@ def main():
     config = ConfigParser.RawConfigParser()
     config.read('config.cfg')
 
-    rpi_server = RPiServer(config.getint('communication', 'port'), config.get('meta', 'name'), config.getint('communication', 'broadcast_frequency'), config.getint('communication', 'broadcast_port'))
+    rpi_server = RPiServer(config.getint('communication', 'port'), config.get('meta', 'name'),
+                           config.getint('communication', 'broadcast_frequency'),
+                           config.getint('communication', 'broadcast_port'), config.get('sensor', 'sensor_port'),
+                           config.getint('sensor', 'sensor_baudrate'))
     rpi_server.run()
 
 

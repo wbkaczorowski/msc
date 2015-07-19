@@ -7,17 +7,21 @@ from twisted.internet import reactor
 from twisted.internet import task
 from autobahn.twisted.websocket import WebSocketServerFactory
 from led import LEDController
+from sensor_reader import SensorReader
 
 
 class RPiServer(object):
-    def __init__(self, port, name, frequency, b_port):
+    def __init__(self, port, name, frequency, b_port, device_port, baudrate):
         self.port = port
         self.name = name
         self.broadcast_frequency = frequency
         self.broadcast_port = b_port
+        self.device_port = device_port
+        self.baudrate = baudrate
 
     def run(self):
         led = LEDController()
+        sesnor_reader = SensorReader(self.device_port, self.baudrate)
 
         try:
             log.startLogging(sys.stdout)

@@ -18,6 +18,7 @@ class RPiServerProtocol(WebSocketServerProtocol):
             print("Binary data received: {0} bytes - not supported".format(len(payload)))
         else:
             s = payload.decode('utf8')
+            # TODO sprawdzanie co za wiadomosc przyszla czy sterujaca czy kolor czy co ...
             print(">>> {0}".format(s))
             self.controller.update_rgb(s)
 

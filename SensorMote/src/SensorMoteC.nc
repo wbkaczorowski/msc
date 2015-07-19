@@ -1,7 +1,8 @@
 #include <Timer.h>
 #include <stdio.h>
-#include <string.h>
+//#include <string.h>
 #include "SensorMote.h"
+//#include "printf.h"
 
 module SensorMoteC {
 
@@ -43,8 +44,8 @@ implementation {
 
 	event void LightRead.readDone(error_t result, uint16_t val) {
 		if(result == SUCCESS) {
-			lightValue = 2.5 * (val / 4096.0) * 6250;
-			printf("[%d] Measured light value: %d lx\r\n", TOS_NODE_ID, lightValue);
+			lightValue = 2.5 * (val / 4096.0) * 6250.0;
+			printf("%d:%d\r\n", TOS_NODE_ID, lightValue);
 
 			// creating the packet 
 			if(radioBusy == FALSE) {
@@ -55,7 +56,7 @@ implementation {
 				// sending packet
 				sendError = call AMSend.send(AM_BROADCAST_ADDR, &pkt, sizeof(SensorMoteMsg_t));
 				if(sendError == SUCCESS) {
-					call Leds.led2Toggle();
+					//call Leds.led2Toggle();
 					radioBusy = TRUE;
 				} else {
 					printf("Error sending msg, code: %d", sendError);
@@ -68,6 +69,7 @@ implementation {
 			printf("Error reading light sensor.\r\n");
 			call Leds.led0Toggle();
 		}
+		printfflush();
 	}
 
 	event void AMSend.sendDone(message_t * msg, error_t error) {
@@ -92,7 +94,8 @@ implementation {
 	event message_t * Receive.receive(message_t *msg, void *payload, uint8_t len){
 		if(len == sizeof(SensorMoteMsg_t)) { 
 			SensorMoteMsg_t* incomingPacket = (SensorMoteMsg_t *) payload;
-			printf("[%d] Measured light value: %d lx\r\n", incomingPacket->nodeId, incomingPacket->lightValue);
+			printf("%d:%d\r\n", incomingPacket->nodeId, incomingPacket->lightValue);
+			printfflush();
 			call Leds.led1Toggle();
 		}
 		return msg;
