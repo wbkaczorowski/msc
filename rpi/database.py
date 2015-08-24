@@ -22,5 +22,5 @@ class Database(object):
 if __name__ == "__main__":
     db = Database()
     db.create_control_table()
-    db.insert_into_control_table(123, 123)
+    # db.insert_into_control_table(66, 66666)
     db.close_connection()

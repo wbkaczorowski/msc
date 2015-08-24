@@ -21,7 +21,7 @@ class RPiServer(object):
 
     def run(self):
         led = LEDController()
-        sesnor_reader = SensorReader(self.device_port, self.baudrate)
+        # sesnor_reader = SensorReader(self.device_port, self.baudrate)
 
         try:
             log.startLogging(sys.stdout)

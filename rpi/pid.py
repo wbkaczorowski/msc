@@ -1,5 +1,6 @@
 class PID:
-    def __init__(self, P=2.0, I=0.5, D=1.0, integrator_max=5000, integrator_min=-5500, start_derivator=0, start_integrator=0):
+    def __init__(self, P=2.0, I=0.5, D=0.0, max_value=600, min_value=0, integrator_max=5000, integrator_min=0,
+                 start_derivator=0, start_integrator=0):
         self.Kp = P
         self.Ki = I
         self.Kd = D
@@ -7,6 +8,8 @@ class PID:
         self.integrator = start_integrator
         self.integrator_max = integrator_max
         self.integrator_min = integrator_min
+        self.max_value = max_value
+        self.min_value = min_value
 
         self.set_point = 0.0
         self.error = 0.0
@@ -25,9 +28,16 @@ class PID:
         elif self.integrator < self.integrator_min:
             self.integrator = self.integrator_min
 
-        self.I_value = self.integrator * self.Ki
+        self.I_value = self.Ki * self.integrator
 
-        return self.P_value + self.I_value + self.D_value
+        ret_value = self.P_value + self.I_value + self.D_value
+
+        if ret_value > self.max_value:
+            ret_value = self.max_value;
+        elif ret_value < self.min_value:
+            ret_value = self.min_value
+
+        return ret_value
 
     def setPoint(self, set_point):
         self.set_point = set_point
