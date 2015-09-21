@@ -2,6 +2,8 @@ package pl.edu.pw.elka.appled.communication;
 
 import java.util.LinkedList;
 
+import org.json.JSONObject;
+
 import pl.edu.pw.elka.appled.Config;
 import pl.edu.pw.elka.appled.fragments.DeviceRowAdapter;
 import android.content.Context;
@@ -36,14 +38,14 @@ public class Communicator {
         new DisconnectSingleAsyncTask().execute(key);
     }
 
-    public void sendData(String data) {
+    public void sendData(JSONObject data) {
         if (connectedDevices.isEmpty()) {
             if (System.currentTimeMillis() - lastToastTime >= 2000) {
                 lastToastTime = System.currentTimeMillis();
                 Toast.makeText(context, "No connected devices!", Toast.LENGTH_SHORT).show();
             }
         } else {
-            new SendDataTask().execute(data);
+            new SendDataTask().execute(data.toString());
         }
     }
 

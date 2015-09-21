@@ -14,12 +14,12 @@
         android:layout_height="wrap_content" >
 
         <pl.edu.pw.elka.appled.fragments.PickedColorViewer
-            android:id="@+id/picked_color_view"
+            android:id="@+id/picked_light_value_view"
             android:layout_width="@dimen/picked_color_viever_size"
             android:layout_height="@dimen/picked_color_viever_size" />
 
         <TextView
-            android:id="@+id/picked_color_code"
+            android:id="@+id/picked_light_value_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -29,42 +29,16 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/red_seek_bar_text"
+        android:id="@+id/light_value_bar_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/red" />
-
-    <SeekBar
-        android:id="@+id/red_seek_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="255"
         />
 
-    <TextView
-        android:id="@+id/green_seek_bar_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/green" />
-
     <SeekBar
-        android:id="@+id/green_seek_bar"
+        android:id="@+id/light_value_seek_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="255"
-        />
-
-    <TextView
-        android:id="@+id/blue_seek_bar_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/blue" />
-
-    <SeekBar
-        android:id="@+id/blue_seek_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="255"
+        android:max="100"
         />
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package pl.edu.pw.elka.appled.fragments;
 
 import pl.edu.pw.elka.appled.R;
 import pl.edu.pw.elka.appled.communication.Communicator;
+import pl.edu.pw.elka.appled.communication.Data;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -70,7 +71,7 @@ public class RGBFragment extends Fragment {
         updateColorInApp(color);
         //TODO wysyłanie tutaj?
         //TODO a może nie wysyłac wszystkich tylko co x ms?
-        communicator.sendData(Integer.toHexString(color).substring(2));
+        communicator.sendData(Data.color(Integer.toHexString(color).substring(2)));
     }
 
     
