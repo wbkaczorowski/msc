@@ -1,4 +1,7 @@
 from autobahn.twisted.websocket import WebSocketServerProtocol
+import json
+import controller
+
 
 class RPiServerProtocol(WebSocketServerProtocol):
 
@@ -8,9 +11,10 @@ class RPiServerProtocol(WebSocketServerProtocol):
 
     def onOpen(self):
         print("WebSocket connection open.")
-        print self.controller.current_RGB
-        payload = self.controller.current_RGB.encode('utf8')
-        self.sendMessage(payload)
+        # TODO odsylanie aktualnej na telefon
+        # print self.controller.current_RGB
+        # payload = self.controller.current_RGB.encode('utf8')
+        # self.sendMessage(payload)
 
 
     def onMessage(self, payload, isBinary):
@@ -18,10 +22,23 @@ class RPiServerProtocol(WebSocketServerProtocol):
             print("Binary data received: {0} bytes - not supported".format(len(payload)))
         else:
             s = payload.decode('utf8')
-            # TODO sprawdzanie co za wiadomosc przyszla czy sterujaca czy kolor czy co ...
             print(">>> {0}".format(s))
-            self.controller.update_rgb(s)
+            self.handleMessage(s)
 
 
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {0}".format(reason))
+
+    def handleMessage(self, msg):
+        data = json.loads(msg)
+        if data.has_key('color'):
+            self.controller.update_manual(data['color'])
+        elif data.has_key('light'):
+            self.controller.update_pid_point(int(data['light']))
+
+# testing purposes
+if __name__ == "__main__":
+
+    data = "{\"light\":58}"
+
+    print "done"

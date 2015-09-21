@@ -1,17 +1,28 @@
 import serial
-
+import threading
+import time
 
 class SensorReader(object):
     def __init__(self, device_port, baudrate):
         self.ser = serial.Serial(device_port, baudrate)
-        # self.ser.setTimeout(1)
+        self.last_read = []
+        self.t = threading.Thread(target=self.read)
+        self.t.daemon = True
 
     def read(self):
-        try:
-            state = self.ser.readline()
-            return self.handle_reading(state)
-        except:
-            pass
+        self.ser.flushInput()
+        while True:
+            try:
+                state = self.ser.readline()
+                self.last_read = self.handle_reading(state)
+            except:
+                pass
+
+    def start_reading(self):
+        self.t.start()
+
+    def get_last_read(self):
+        return self.last_read
 
     def handle_reading(self, state):
         splitted = state.strip().split(':')
@@ -24,12 +35,12 @@ class SensorReader(object):
 
 # testing purposes
 if __name__ == "__main__":
-    sr = SensorReader('/dev/ttyUSB0', 115200)
+    sr = SensorReader('/dev/tty.usbserial-MFU7XCA3', 115200)
+    sr.start_reading()
     try:
         while True:
-            value = sr.read()
-            if value:
-                print(value)
+            print(sr.get_last_read())
+            time.sleep(0.5)
     except KeyboardInterrupt:
         print "done"
     finally:

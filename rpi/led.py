@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 
 
-class LEDController(object):
+class LED(object):
     RED_PIN = 23
     GREEN_PIN = 24
     BLUE_PIN = 25
@@ -29,10 +29,8 @@ class LEDController(object):
 
     def update_rgb(self, rgb_string_value):
         self.red = self.get_red_value(rgb_string_value)
-        self.green = self.get_red_value(rgb_string_value)
-        self.blue = self.get_red_value(rgb_string_value)
-        # self.green = self.get_green_value(rgb_string_value)
-        # self.blue = self.get_blue_value(rgb_string_value)
+        self.green = self.get_green_value(rgb_string_value)
+        self.blue = self.get_blue_value(rgb_string_value)
         self.current_RGB = self.rgb_hex_string()
         self.update_red()
         self.update_green()
@@ -91,23 +89,29 @@ class LEDController(object):
 
 class LEDModel(object):
     @staticmethod
-    def getLux(pwm):
+    def get_lux(pwm):
         lux = 2 * pwm + 20
         return lux
 
     @staticmethod
-    def getPwm(lux):
+    def get_pwm(lux):
         pwm = (lux - 20) / 2.0
+        if pwm > 255:
+            pwm = 255
+        elif pwm < 0:
+            pwm = 0
         return pwm
 
 if __name__ == "__main__":
-    led = LEDController()
-    try:
-        while True:
-            try:
-                value = int(raw_input('Input:'))
-                led.update_all(value)
-            except ValueError:
-                print "Not a number"
-    finally:
-        led.stop()
+
+    print(LEDModel.getLux(13.0))
+    # led = LED()
+    # try:
+    #     while True:
+    #         try:
+    #             value = int(raw_input('Input:'))
+    #             led.update_all(value)
+    #         except ValueError:
+    #             print "Not a number"
+    # finally:
+    #     led.stop()

@@ -2,8 +2,8 @@ import sqlite3
 import time
 
 class Database(object):
-    def __init__(self):
-        self.database_file_name = "../rpi.db"
+    def __init__(self, db_file):
+        self.database_file_name = db_file
         self.conn = sqlite3.connect(self.database_file_name)
         self.cursor = self.conn.cursor()
 

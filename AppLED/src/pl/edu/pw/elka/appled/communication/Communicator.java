@@ -16,152 +16,149 @@ import de.tavendo.autobahn.WebSocketHandler;
 
 public class Communicator {
 
-    private Context context;
+	private Context context;
 
-    private long lastToastTime;
+	private long lastToastTime;
 
-    public static final String TAG = "Communicator";
+	public static final String TAG = "Communicator";
 
-    // TODO to żeby w threadpoola puścic jakiegoś
-    private LinkedList<WebSocketConnection> connectedDevices = new LinkedList<>();
+	// TODO to żeby w threadpoola puścic jakiegoś
+	private LinkedList<WebSocketConnection> connectedDevices = new LinkedList<>();
 
-    public Communicator(Context context) {
-        this.context = context;
-        this.lastToastTime = System.currentTimeMillis();
-    }
+	public Communicator(Context context) {
+		this.context = context;
+		this.lastToastTime = System.currentTimeMillis();
+	}
 
-    public void connect(String key) {
-        new ConnectDataTask().execute("ws://" + key + ":" + Config.PORT);
-    }
+	public void connect(String key) {
+		new ConnectDataTask().execute("ws://" + key + ":" + Config.PORT);
+	}
 
-    public void disconnect(String key) {
-        new DisconnectSingleAsyncTask().execute(key);
-    }
+	public void disconnect(String key) {
+		new DisconnectSingleAsyncTask().execute(key);
+	}
 
-    public void sendData(JSONObject data) {
-        if (connectedDevices.isEmpty()) {
-            if (System.currentTimeMillis() - lastToastTime >= 2000) {
-                lastToastTime = System.currentTimeMillis();
-                Toast.makeText(context, "No connected devices!", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            new SendDataTask().execute(data.toString());
-        }
-    }
+	public void sendData(JSONObject data) {
+		if (connectedDevices.isEmpty()) {
+			if (System.currentTimeMillis() - lastToastTime >= 2000) {
+				lastToastTime = System.currentTimeMillis();
+				Toast.makeText(context, "No connected devices!", Toast.LENGTH_SHORT).show();
+			}
+		} else {
+			new SendDataTask().execute(data.toString());
+		}
+	}
 
-    public void disconnectAll() {
-        new DisconnectAllAsyncTask().execute();
-    }
+	public void disconnectAll() {
+		new DisconnectAllAsyncTask().execute();
+	}
 
+	public ServerFinderTask getServerFinderTask(DeviceRowAdapter adapter) {
+		return new ServerFinderTask(this.context, adapter);
+	}
 
-    public ServerFinderTask getServerFinderTask(DeviceRowAdapter adapter) {
-        return new ServerFinderTask(this.context, adapter);
-    }
+	// TODO pozmieniać asynki to wszystko (threadpool jakiś?)
+	private class SendDataTask extends AsyncTask<String, Void, Void> {
 
-    // TODO pozmieniać asynki to wszystko (threadpool jakiś?)
-    private class SendDataTask extends AsyncTask<String, Void, Void> {
+		@Override
+		protected Void doInBackground(String... params) {
+			String data = params[0];
 
-        @Override
-        protected Void doInBackground(String... params) {
-            String data = params[0];
+			// TODO to żeby w threadpoola puścic jakiegoś
+			if (connectedDevices.size() < 1) {
+				// toast tutaj
+			} else {
+				for (WebSocketConnection wsc : connectedDevices) {
+					if (wsc.isConnected()) {
+						wsc.sendTextMessage(data);
+					}
+				}
+			}
 
-            // TODO to żeby w threadpoola puścic jakiegoś
-            if (connectedDevices.size() < 1) {
-                // toast tutaj
-            } else {
-                for (WebSocketConnection wsc : connectedDevices) {
-                    if (wsc.isConnected()) {
-                        wsc.sendTextMessage(data);
-                    }
-                }
-            }
+			return null;
+		}
 
-            return null;
-        }
+	}
 
-    }
+	private class ConnectDataTask extends AsyncTask<String, Void, Void> {
 
-    private class ConnectDataTask extends AsyncTask<String, Void, Void> {
+		@Override
+		protected Void doInBackground(String... params) {
+			String data = params[0];
 
-        @Override
-        protected Void doInBackground(String... params) {
-            String data = params[0];
+			connectedDevices.add(startSingleConnction(data));
 
-            connectedDevices.add(startSingleConnction(data));
+			return null;
+		}
 
-            return null;
-        }
+		public WebSocketConnection startSingleConnction(final String wsUri) {
+			WebSocketConnection connection = new WebSocketConnection();
 
-        public WebSocketConnection startSingleConnction(final String wsUri) {
-            WebSocketConnection connection = new WebSocketConnection();
+			try {
+				connection.connect(wsUri, new WebSocketHandler() {
 
-            try {
-                connection.connect(wsUri, new WebSocketHandler() {
+					@Override
+					public void onOpen() {
+						Log.d(TAG, "Connected: " + wsUri);
+					}
 
-                    @Override
-                    public void onOpen() {
-                        Log.d(TAG, "Connected: " + wsUri);
-                    }
+					@Override
+					public void onTextMessage(String payload) {
+						Log.d(TAG, "Recieved message: " + payload);
+						// TODO ustawianie tego?
+					}
 
-                    @Override
-                    public void onTextMessage(String payload) {
-                        Log.d(TAG, "Recieved message: " + payload);
-                        // TODO ustawianie tego?
-                    }
+					@Override
+					public void onClose(int code, String reason) {
+						Log.d(TAG, "Connection lost.");
+					}
+				});
+			} catch (WebSocketException e) {
+				Log.d(TAG, e.toString());
+			}
+			return connection;
+		}
 
-                    @Override
-                    public void onClose(int code, String reason) {
-                        Log.d(TAG, "Connection lost.");
-                    }
-                });
-            } catch (WebSocketException e) {
-                Log.d(TAG, e.toString());
-            }
-            return connection;
-        }
+		public void startMultipleConnections() {
+			// TODO przygotować na wiele
+		}
 
-        public void startMultipleConnections() {
-            // TODO przygotować na wiele
-        }
+	}
 
-    }
+	private class DisconnectSingleAsyncTask extends AsyncTask<String, Void, Void> {
 
-    private class DisconnectSingleAsyncTask extends AsyncTask<String, Void, Void> {
+		@Override
+		protected Void doInBackground(String... params) {
 
-        @Override
-        protected Void doInBackground(String... params) {
+			// TODO zeby na jedym wylaczalo
+			for (WebSocketConnection wsc : connectedDevices) {
+				if (wsc.isConnected()) {
+					wsc.disconnect();
+				}
+			}
+			connectedDevices.removeAll(connectedDevices);
 
-            // TODO zeby na jedym wylaczalo
-            for (WebSocketConnection wsc : connectedDevices) {
-                if (wsc.isConnected()) {
-                    wsc.disconnect();
-                }
-            }
-            connectedDevices.removeAll(connectedDevices);
+			return null;
+		}
 
-            return null;
-        }
+	}
 
-    }
+	private class DisconnectAllAsyncTask extends AsyncTask<Void, Void, Void> {
 
-    private class DisconnectAllAsyncTask extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... params) {
 
-        @Override
-        protected Void doInBackground(Void... params) {
+			// TODO to żeby w threadpoola puścic jakiegoś
+			for (WebSocketConnection wsc : connectedDevices) {
+				if (wsc.isConnected()) {
+					wsc.disconnect();
+				}
+			}
+			connectedDevices.removeAll(connectedDevices);
 
-            // TODO to żeby w threadpoola puścic jakiegoś
-            for (WebSocketConnection wsc : connectedDevices) {
-                if (wsc.isConnected()) {
-                    wsc.disconnect();
-                }
-            }
-            connectedDevices.removeAll(connectedDevices);
+			return null;
+		}
 
-            return null;
-        }
-
-    }
-
-
+	}
 
 }
