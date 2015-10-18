@@ -29,7 +29,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 	public Fragment getItem(int position) {
 		switch (position) {
 		case 0:
-			return new RGBFragment(communicator);
+			RGBFragment rgbFragment = new RGBFragment(communicator);
+			communicator.setRgbFragment(rgbFragment);
+			return rgbFragment;
 		case 1:
 			return new LightFragment(communicator);
 		case 2:

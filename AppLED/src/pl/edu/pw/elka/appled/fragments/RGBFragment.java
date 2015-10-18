@@ -16,87 +16,103 @@ import android.widget.TextView;
 
 public class RGBFragment extends Fragment {
 
-    public static final String TAG = "RGBFragment";
-    
-    private Communicator communicator;
+	public static final String TAG = "RGBFragment";
 
-    private int chosenColor;
-    private int red;
-    private int green;
-    private int blue;
+	private Communicator communicator;
 
-    private TextView pickedColorCode;
-    private PickedColorViewer pickedColorViewer;
-    private SeekBar redSeekBar;
-    private SeekBar greenSeekBar;
-    private SeekBar blueSeekBar;
-    
-    public RGBFragment(Communicator communicator) {
-        //TODO na taki jaki jest na rpi 
-        chosenColor = Color.GRAY; // default value
-        red = Color.red(chosenColor);
-        green = Color.green(chosenColor);
-        blue = Color.blue(chosenColor);
-        this.communicator = communicator;
-    }
+	private int chosenColor;
+	private int red;
+	private int green;
+	private int blue;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.rgb_fragment, container, false);
-        pickedColorViewer = (PickedColorViewer) rootView.findViewById(R.id.picked_color_view);
-        pickedColorCode = (TextView) rootView.findViewById(R.id.picked_color_code);
-        redSeekBar = (SeekBar) rootView.findViewById(R.id.red_seek_bar);
-        greenSeekBar = (SeekBar) rootView.findViewById(R.id.green_seek_bar);
-        blueSeekBar = (SeekBar) rootView.findViewById(R.id.blue_seek_bar);
+	private TextView pickedColorCode;
+	private PickedColorViewer pickedColorViewer;
+	private SeekBar redSeekBar;
+	private SeekBar greenSeekBar;
+	private SeekBar blueSeekBar;
 
-        redSeekBar.setProgress(red);
-        greenSeekBar.setProgress(green);
-        blueSeekBar.setProgress(blue);
+	public RGBFragment(Communicator communicator) {
+		// TODO na taki jaki jest na rpi
+		chosenColor = Color.GRAY; // default value
+		red = Color.red(chosenColor);
+		green = Color.green(chosenColor);
+		blue = Color.blue(chosenColor);
+		this.communicator = communicator;
+	}
 
-        redSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
-        greenSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
-        blueSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.rgb_fragment, container, false);
+		pickedColorViewer = (PickedColorViewer) rootView.findViewById(R.id.picked_color_view);
+		pickedColorCode = (TextView) rootView.findViewById(R.id.picked_color_code);
+		redSeekBar = (SeekBar) rootView.findViewById(R.id.red_seek_bar);
+		greenSeekBar = (SeekBar) rootView.findViewById(R.id.green_seek_bar);
+		blueSeekBar = (SeekBar) rootView.findViewById(R.id.blue_seek_bar);
 
-        updateColorInApp(chosenColor);
-        return rootView;
-    }
+		redSeekBar.setProgress(red);
+		greenSeekBar.setProgress(green);
+		blueSeekBar.setProgress(blue);
 
-    public void updateColorInApp(int color) {
-        pickedColorCode.setText("#" + Integer.toHexString(color).substring(2));
-        pickedColorViewer.updateColor(color);
-        pickedColorViewer.invalidate();
-    }
-    
-    public void updateColor(int color) {
-        updateColorInApp(color);
-        //TODO wysyłanie tutaj?
-        //TODO a może nie wysyłac wszystkich tylko co x ms?
-        communicator.sendData(Data.color(Integer.toHexString(color).substring(2)));
-    }
+		redSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
+		greenSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
+		blueSeekBar.setOnSeekBarChangeListener(new ColorOnSeekBarChangeListener());
 
-    
-    private class ColorOnSeekBarChangeListener implements OnSeekBarChangeListener {
+		updateColorInApp(chosenColor);
+		return rootView;
+	}
 
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (seekBar.equals(redSeekBar)) {
-                red = progress;
-            } else if (seekBar.equals(greenSeekBar)) {
-                green = progress;
-            } else if (seekBar.equals(blueSeekBar)) {
-                blue = progress;
-            }
-            chosenColor = Color.rgb(red, green, blue);
-            updateColor(chosenColor);
-        }
+	public void updateColorInApp(int color) {
+		pickedColorCode.setText("#" + Integer.toHexString(color).substring(2));
+		pickedColorViewer.updateColor(color);
+		pickedColorViewer.invalidate();
+	}
 
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-        }
+	public void updateColor(int color) {
+		updateColorInApp(color);
+		// TODO wysyłanie tutaj?
+		// TODO a może nie wysyłac wszystkich tylko co x ms?
+		communicator.sendData(Data.color(Integer.toHexString(color).substring(2)));
+	}
 
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-        }
-    }
+	private class ColorOnSeekBarChangeListener implements OnSeekBarChangeListener {
+
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			if (fromUser) {
+				if (seekBar.equals(redSeekBar)) {
+					red = progress;
+				} else if (seekBar.equals(greenSeekBar)) {
+					green = progress;
+				} else if (seekBar.equals(blueSeekBar)) {
+					blue = progress;
+				}
+				chosenColor = Color.rgb(red, green, blue);
+				updateColor(chosenColor);
+			}
+		}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {
+		}
+
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {
+		}
+	}
+
+	/**
+	 * @return the chosenColor
+	 */
+	public int getChosenColor() {
+		return chosenColor;
+	}
+
+	/**
+	 * @param chosenColor
+	 *            the chosenColor to set
+	 */
+	public void setChosenColor(int chosenColor) {
+		this.chosenColor = chosenColor;
+	}
 
 }

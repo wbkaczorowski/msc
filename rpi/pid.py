@@ -19,7 +19,7 @@ class PID:
     def update(self, current_value):
         self.error = self.point - current_value
 
-        if math.fabs(self.error) > self.tolerance:
+        if math.fabs(self.error) >= self.tolerance:
             if self.max_out > (self.error_total + self.error) * self.Ki > self.min_out:
                 self.error_total += self.error
 

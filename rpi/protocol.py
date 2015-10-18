@@ -13,8 +13,9 @@ class RPiServerProtocol(WebSocketServerProtocol):
         print("WebSocket connection open.")
         # TODO odsylanie aktualnej na telefon
         # print self.controller.current_RGB
-        # payload = self.controller.current_RGB.encode('utf8')
-        # self.sendMessage(payload)
+        payload = {'color' : self.controller.led.current_RGB }
+        print payload
+        self.sendMessage(json.dumps(payload).encode('utf8'))
 
 
     def onMessage(self, payload, isBinary):

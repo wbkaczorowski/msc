@@ -6,7 +6,9 @@ import org.json.JSONObject;
 
 import pl.edu.pw.elka.appled.Config;
 import pl.edu.pw.elka.appled.fragments.DeviceRowAdapter;
+import pl.edu.pw.elka.appled.fragments.RGBFragment;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,6 +26,8 @@ public class Communicator {
 
 	// TODO to żeby w threadpoola puścic jakiegoś
 	private LinkedList<WebSocketConnection> connectedDevices = new LinkedList<>();
+
+	private RGBFragment rgbFragment;
 
 	public Communicator(Context context) {
 		this.context = context;
@@ -105,7 +109,11 @@ public class Communicator {
 					@Override
 					public void onTextMessage(String payload) {
 						Log.d(TAG, "Recieved message: " + payload);
-						// TODO ustawianie tego?
+						if (rgbFragment != null) {
+							int color = Data.colorFromJson(payload);
+							rgbFragment.setChosenColor(color);
+							rgbFragment.updateColorInApp(color);
+						}
 					}
 
 					@Override
@@ -159,6 +167,10 @@ public class Communicator {
 			return null;
 		}
 
+	}
+
+	public void setRgbFragment(RGBFragment rgbFragment) {
+		this.rgbFragment = rgbFragment;
 	}
 
 }

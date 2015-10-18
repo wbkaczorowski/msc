@@ -52,7 +52,7 @@ class LED(object):
         self.update_blue()
 
     def rgb_hex_string(self):
-        return '%x' % self.red + '%x' % self.green + '%x' % self.blue
+        return '{0:06x}'.format((self.red << 16) + (self.green << 8) + self.blue)
 
     # TODO te wartosci poprawic
     def update_red(self):
@@ -90,21 +90,25 @@ class LED(object):
 class LEDModel(object):
     @staticmethod
     def get_lux(pwm):
-        lux = 2 * pwm + 20
+        lux = 2.15 * pwm + 2.26
         return lux
 
     @staticmethod
     def get_pwm(lux):
-        pwm = (lux - 20) / 2.0
+        pwm = (lux - 2.26) / 2.15
         if pwm > 255:
             pwm = 255
         elif pwm < 0:
             pwm = 0
-        return pwm
+        return int(pwm)
 
 if __name__ == "__main__":
 
-    print(LEDModel.getLux(13.0))
+    print '{0:06x}'.format((0 << 16) + (12 << 8) + 255)
+
+    print 10*100.0/255.0
+
+    # print(LEDModel.getLux(13.0))
     # led = LED()
     # try:
     #     while True:

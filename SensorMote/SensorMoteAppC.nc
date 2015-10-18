@@ -29,8 +29,8 @@ implementation {
 
 	// radio communication
 	components ActiveMessageC;
-	components new AMSenderC(AM_SENSOR_MOTE);
-	components new AMReceiverC(AM_SENSOR_MOTE);
+	components new AMSenderC(AM_SENSORMOTEMSG);
+	components new AMReceiverC(AM_SENSORMOTEMSG);
 
 	App.Packet->AMSenderC;
 	App.AMPacket->AMSenderC;

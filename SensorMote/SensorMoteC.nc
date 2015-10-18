@@ -31,6 +31,9 @@ implementation {
 	bool radioBusy = FALSE;
 	message_t pkt;
 	error_t sendError;
+  uint32_t meanLightValue = 0;
+  uint8_t counter = 0;
+	
 
 	event void Boot.booted() {
 		call AMControl.start();
@@ -38,31 +41,41 @@ implementation {
 
 	event void Timer.fired() {
 		if(call LightRead.read() != SUCCESS) {
-			call Leds.led0Toggle();
+			call Leds.led0On();
+		} else {
+			call Leds.led0Off();
 		}
 	}
 
 	event void LightRead.readDone(error_t result, uint16_t val) {
 		if(result == SUCCESS) {
 			lightValue = 2.5 * (val / 4096.0) * 6250.0;
-			printf("%d:%d\r\n", TOS_NODE_ID, lightValue);
 
-			// creating the packet 
-			if(radioBusy == FALSE) {
-				SensorMoteMsg_t * msg = call Packet.getPayload(&pkt, sizeof(SensorMoteMsg_t));
-				msg->lightValue = lightValue;
-				msg->nodeId = TOS_NODE_ID;
+      if (counter < ARVG_SIZE) {
+       meanLightValue += lightValue;
+	     counter++;
+	    } else {
+	      meanLightValue = meanLightValue / ARVG_SIZE; 
+	      counter = 0;
+			  printf("%d:%d\r\n", TOS_NODE_ID, meanLightValue);
 
-				// sending packet
-				sendError = call AMSend.send(AM_BROADCAST_ADDR, &pkt, sizeof(SensorMoteMsg_t));
-				if(sendError == SUCCESS) {
-					//call Leds.led2Toggle();
-					radioBusy = TRUE;
-				} else {
-					printf("Error sending msg, code: %d", sendError);
-					call Leds.led0Toggle();					
-				}
-				sendError = 0;
+			  // creating the packet 
+			  if(radioBusy == FALSE) {
+				  SensorMoteMsg_t * msg = call Packet.getPayload(&pkt, sizeof(SensorMoteMsg_t));
+				  msg->lightValue = meanLightValue;
+				  msg->nodeId = TOS_NODE_ID;
+
+				  // sending packet
+				  sendError = call AMSend.send(AM_BROADCAST_ADDR, &pkt, sizeof(SensorMoteMsg_t));
+				  if(sendError == SUCCESS) {
+					  //call Leds.led2Toggle();
+					  radioBusy = TRUE;
+				  } else {
+					  printf("Error sending msg, code: %d", sendError);
+					  call Leds.led0Toggle();					
+				  }
+				  sendError = 0;
+			  }
 			}
 		}
 		else {

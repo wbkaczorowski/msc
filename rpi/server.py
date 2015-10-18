@@ -42,6 +42,7 @@ class RPiServer(object):
             print "Another server already opened at port: ", self.port
         finally:
             sensor_reader.close()
+            light_controller.stop()
             # database.close_connection()
             led.stop()
 
