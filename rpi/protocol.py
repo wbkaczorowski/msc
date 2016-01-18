@@ -36,6 +36,8 @@ class RPiServerProtocol(WebSocketServerProtocol):
             self.controller.update_manual(data['color'])
         elif data.has_key('light'):
             self.controller.update_pid_point(int(data['light']))
+        elif data.has_key('temperature'):
+            self.controller.update_temp(data['temperature'])
 
 # testing purposes
 if __name__ == "__main__":

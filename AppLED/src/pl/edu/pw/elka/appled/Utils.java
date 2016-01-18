@@ -5,15 +5,13 @@ import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
 /**
- * Class holding some helpfull static methods.
+ * Class holding some helpful static methods.
  * 
  * @author Wojciech Kaczorowski
  *
  */
 public class Utils {
 
-    
-    
     /**
      * This method converts dp unit to equivalent pixels, depending on device density.
      * 

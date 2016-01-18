@@ -29,6 +29,16 @@ public class Data {
 		}
 		return json;
 	}
+	
+	public static JSONObject temperature(int tempValue) {
+		JSONObject json = new JSONObject();
+		try {
+			json.put("temperature", tempValue);
+		} catch (JSONException e) {
+			Log.w(TAG, e);
+		}
+		return json;
+	}
 
 	public static int colorFromJson(String data) {
 		try {

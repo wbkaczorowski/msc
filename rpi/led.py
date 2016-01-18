@@ -1,5 +1,5 @@
-import RPi.GPIO as GPIO
-
+# import RPi.GPIO as GPIO
+import math
 
 class LED(object):
     RED_PIN = 23
@@ -102,11 +102,59 @@ class LEDModel(object):
             pwm = 0
         return int(pwm)
 
+
+class TempModel(object):
+    @staticmethod
+    def get_rgb(kelvin):
+        temp = kelvin / 100.0;
+        # calculating red
+        if temp <= 66:
+            red = 255
+        else:
+            red = temp - 60
+            red = 329.698727446 * math.pow(red, -0.1332047592)
+            if red < 0:
+                red = 0
+            elif red > 255:
+                red = 255
+
+        # calculating green
+        if temp <= 66:
+            green = temp
+            green = 99.4708025861 * math.log(green) - 161.1195681661
+        else:
+            green = temp - 60
+            green = 288.1221695283 * math.pow(green, -0.0755148492)
+        if green < 0:
+            green = 0
+        elif green > 255:
+            green = 255
+
+        # calculating blue
+        if temp >= 66:
+            blue = 255
+        else:
+            if temp <= 19:
+                blue = 0
+            else:
+                blue = temp - 10
+                blue = 138.5177312231 * math.log(blue) - 305.0447927307
+                if blue < 0:
+                    blue = 0
+                elif blue > 255:
+                    blue = 255
+
+        return red, green, blue
+
+
+# testing purposes
 if __name__ == "__main__":
 
-    print '{0:06x}'.format((0 << 16) + (12 << 8) + 255)
+    # print '{0:06x}'.format((0 << 16) + (12 << 8) + 255)
 
-    print 10*100.0/255.0
+    # print 10*100.0/255.0
+
+    print TempModel.get_rgb(6800)
 
     # print(LEDModel.getLux(13.0))
     # led = LED()

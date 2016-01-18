@@ -1,6 +1,6 @@
 from datetime import time
 from sensor_reader import SensorReader
-from led import LED, LEDModel
+from led import LED, LEDModel, TempModel
 from pid import PID
 from database import Database
 import time
@@ -72,6 +72,12 @@ class Controller(object):
             self.automatic_mode_thread.join()
         if self.mode == MANUAL:
             self.led.update_rgb(rgb_value)
+
+    def update_temp(self, temp_value):
+        rgb_tuple = TempModel.get_rgb(temp_value)
+        # TODO te wartości ogarnąć
+        # self.update_manual()
+
 
     def stop(self):
         self.mode = MANUAL

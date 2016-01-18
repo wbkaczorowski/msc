@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 public class LightFragment extends Fragment {
 
-    public static final String TAG = "L";
+    public static final String TAG = "LightFragment";
     
     private Communicator communicator;
 

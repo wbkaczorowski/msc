@@ -11,7 +11,7 @@ import android.util.SparseArray;
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 	private SparseArray<String> fragmentNames;
-	private final int fragmentsNumber = 3;
+	private final int fragmentsNumber = 4;
 
 	private Communicator communicator;
 
@@ -20,7 +20,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 		fragmentNames = new SparseArray<String>();
 		fragmentNames.put(0, context.getString(R.string.colors_rbg_fragment));
 		fragmentNames.put(1, context.getString(R.string.light_fragment));
-		fragmentNames.put(2, context.getString(R.string.devices_section_title));
+		fragmentNames.put(2, context.getString(R.string.temperature_fragment));
+		fragmentNames.put(3, context.getString(R.string.devices_section_title));
 
 		this.communicator = communicator;
 	}
@@ -35,6 +36,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 		case 1:
 			return new LightFragment(communicator);
 		case 2:
+			return new TemperatureFragment(communicator);
+		case 3:
 			return new DevicesFragment(communicator);
 
 		default:
