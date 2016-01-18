@@ -34,6 +34,7 @@ public class Data {
 		JSONObject json = new JSONObject();
 		try {
 			json.put("temperature", tempValue);
+//			Log.d(TAG, "temperature: " + tempValue);
 		} catch (JSONException e) {
 			Log.w(TAG, e);
 		}

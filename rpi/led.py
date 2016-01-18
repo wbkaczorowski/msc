@@ -1,4 +1,4 @@
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import math
 
 class LED(object):
@@ -31,6 +31,15 @@ class LED(object):
         self.red = self.get_red_value(rgb_string_value)
         self.green = self.get_green_value(rgb_string_value)
         self.blue = self.get_blue_value(rgb_string_value)
+        self.current_RGB = self.rgb_hex_string()
+        self.update_red()
+        self.update_green()
+        self.update_blue()
+
+    def update_rgb_tuple(self, rgb_tuple):
+        self.red = int(rgb_tuple[0])
+        self.green = int(rgb_tuple[1])
+        self.blue = int(rgb_tuple[2])
         self.current_RGB = self.rgb_hex_string()
         self.update_red()
         self.update_green()
@@ -154,7 +163,9 @@ if __name__ == "__main__":
 
     # print 10*100.0/255.0
 
-    print TempModel.get_rgb(6800)
+    print TempModel.get_rgb(6800)[0]
+    print TempModel.get_rgb(6800)[2]
+
 
     # print(LEDModel.getLux(13.0))
     # led = LED()

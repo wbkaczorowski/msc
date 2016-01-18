@@ -75,8 +75,11 @@ class Controller(object):
 
     def update_temp(self, temp_value):
         rgb_tuple = TempModel.get_rgb(temp_value)
-        # TODO te wartości ogarnąć
-        # self.update_manual()
+        if not self.mode == MANUAL:
+            self.mode = MANUAL
+            self.automatic_mode_thread.join()
+        if self.mode == MANUAL:
+            self.led.update_rgb_tuple(rgb_tuple)
 
 
     def stop(self):
