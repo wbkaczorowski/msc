@@ -36,9 +36,10 @@ class PID:
         return self.result
 
     def set_point(self, set_point):
-        self.point = set_point
-        self.error = 0.0
-        self.error_total = 0.0
-        self.error_prev = 0.0
-        self.result = 0.0
+        if self.point != set_point:
+            self.point = set_point
+            self.error = 0.0
+            self.error_total = 0.0
+            self.error_prev = 0.0
+            self.result = 0.0
 

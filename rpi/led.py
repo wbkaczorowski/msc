@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import math
 
+
 class LED(object):
     RED_PIN = 23
     GREEN_PIN = 24
@@ -25,7 +26,6 @@ class LED(object):
         self.pwms = [self.pwm_red, self.pwm_green, self.pwm_blue]
         for pwm in self.pwms:
             pwm.start(0)
-
 
     def update_rgb(self, rgb_string_value):
         self.red = self.get_red_value(rgb_string_value)
@@ -63,6 +63,21 @@ class LED(object):
     def rgb_hex_string(self):
         return '{0:06x}'.format((self.red << 16) + (self.green << 8) + self.blue)
 
+    def update_value_red(self, new_val):
+        self.red = new_val
+        self.current_RGB = self.rgb_hex_string()
+        self.update_red()
+
+    def update_value_green(self, new_val):
+        self.green = new_val
+        self.current_RGB = self.rgb_hex_string()
+        self.update_green()
+
+    def update_value_blue(self, new_val):
+        self.blue = new_val
+        self.current_RGB = self.rgb_hex_string()
+        self.update_blue()
+
     # TODO te wartosci poprawic
     def update_red(self):
         # print "red: ", self.red
@@ -73,7 +88,6 @@ class LED(object):
         # print "green: ",  self.green
         # print "green: ",  self.green*100.0/255.0
         self.pwm_green.ChangeDutyCycle(self.green * 100.0 / 255.0)
-
 
     def update_blue(self):
         # print "blue: ",  self.blue
@@ -99,11 +113,19 @@ class LED(object):
 class LEDModel(object):
     @staticmethod
     def get_lux(pwm):
+        '''
+        :param pwm range 0-255:
+        :return lux in range  0-550:
+        '''
         lux = 2.15 * pwm + 2.26
         return lux
 
     @staticmethod
     def get_pwm(lux):
+        '''
+        :param lux:
+        :return pwm in range 0-255:
+        '''
         pwm = (lux - 2.26) / 2.15
         if pwm > 255:
             pwm = 255
@@ -111,6 +133,47 @@ class LEDModel(object):
             pwm = 0
         return int(pwm)
 
+    @staticmethod
+    def get_red_lux(pwm):
+        lux = 0.221 * pwm + 3.502
+        return lux
+
+    @staticmethod
+    def get_green_lux(pwm):
+        lux = 0.223 * pwm + 3.83
+        return lux
+
+    @staticmethod
+    def get_blue_lux(pwm):
+        lux = 0.271 * pwm + 7.081
+        return lux
+
+    @staticmethod
+    def get_red_pwm(lux):
+        pwm = (lux - 3.502) / 0.221
+        if pwm > 255:
+            pwm = 255
+        elif pwm < 0:
+            pwm = 0
+        return int(pwm)
+
+    @staticmethod
+    def get_green_pwm(lux):
+        pwm = (lux - 3.83) / 0.223
+        if pwm > 255:
+            pwm = 255
+        elif pwm < 0:
+            pwm = 0
+        return int(pwm)
+
+    @staticmethod
+    def get_blue_pwm(lux):
+        pwm = (lux - 7.081) / 0.271
+        if pwm > 255:
+            pwm = 255
+        elif pwm < 0:
+            pwm = 0
+        return int(pwm)
 
 class TempModel(object):
     @staticmethod
@@ -158,7 +221,6 @@ class TempModel(object):
 
 # testing purposes
 if __name__ == "__main__":
-
     # print '{0:06x}'.format((0 << 16) + (12 << 8) + 255)
 
     # print 10*100.0/255.0

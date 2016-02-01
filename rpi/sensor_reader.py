@@ -66,7 +66,7 @@ class SensorReader(object):
 
 # testing purposes
 if __name__ == "__main__":
-    sr = SensorReader('/dev/tty.usbserial-MFU7XCA3', 115200)
+    sr = SensorReader('/dev/tty.usbserial-MFU7XGR7', 115200)
     # sr.start_reading()
     try:
         while True:

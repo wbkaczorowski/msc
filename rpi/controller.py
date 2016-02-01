@@ -12,6 +12,10 @@ MAX_VALUE = 550
 CONST_TIME = 1.0
 MANUAL = "manual"
 AUTO = "automatic"
+AUTO_3 = "three channel"
+
+MOTES_COLOR = {4: 'red', 6: 'green', 7: 'blue'}
+
 
 class Controller(object):
     def __init__(self, sensor_reader, led, database=None, file=None):
@@ -20,19 +24,30 @@ class Controller(object):
         self.database = database
         self.output_file = file
 
-        self.pid = PID(0.495, 0.594, 0.0, MIN_VALUE, MAX_VALUE, 5)
+        self.pid = PID(0.495, 0.594, 0.0, MIN_VALUE, MAX_VALUE, 0)
+
+        # TODO maxy i miny ustawic
+        self.red_pid = PID(0.495, 0.594, 0.0, MIN_VALUE, 65, 0)
+        self.green_pid = PID(0.495, 0.594, 0.0, MIN_VALUE, 80, 0)
+        self.blue_pid = PID(0.495, 0.594, 0.0, MIN_VALUE, 70, 0)
+
         # self.pid = PID(2.0, 0.0, 0.0, MIN_VALUE, MAX_VALUE, 0)
+
         self.mode = MANUAL
 
     def _init_thread(self):
         self.automatic_mode_thread = threading.Thread(target=self.start_automatic)
         self.automatic_mode_thread.start()
 
+    def _init_three_thread(self):
+        self.automatic_mode_three_thread = threading.Thread(target=self.start_three_channel)
+        self.automatic_mode_three_thread.start()
+
     def start_automatic(self):
         start_time_ref = time.time()
         while self.mode == AUTO:
             try:
-                start_time = time.time()
+                # start_time = time.time()
                 # wait_time = 1.0
                 # while wait_time > 0:
                 #     wait_time = CONST_TIME + start_time - time.time()
@@ -55,21 +70,109 @@ class Controller(object):
                 time.sleep(0.1)
                 pass
 
+    def start_three_channel(self):
+        start_time_ref = time.time()
+        while self.mode == AUTO_3:
+            try:
+                read_packet = self.sensor_reader.handle_reading(self.sensor_reader.readline());
+                # print MOTES_COLOR[int(read_packet[0])] + " : " + read_packet[1]
+
+                key = MOTES_COLOR[int(read_packet[0])]
+                if key == 'red':
+                    red_pid_value = self.red_pid.update(int(read_packet[1]))
+                    red_pwm_value = LEDModel.get_red_pwm(red_pid_value)
+                    red_output = "{0}: {1}, {2}, {3}, {4}".format(key,
+                                                              time.time() - start_time_ref, int(read_packet[1]),
+                                                              red_pid_value,
+                                                              red_pwm_value)
+                    print red_output
+                    self.led.update_value_red(red_pwm_value)
+                elif key == 'green':
+                    green_pid_value = self.green_pid.update(int(read_packet[1]))
+                    green_pwm_value = LEDModel.get_green_pwm(green_pid_value)
+                    green_output = "{0}: {1}, {2}, {3}, {4}".format(key,
+                                                              time.time() - start_time_ref, int(read_packet[1]),
+                                                              green_pid_value,
+                                                              green_pwm_value)
+                    print green_output
+                    self.led.update_value_green(green_pwm_value)
+                elif key == 'blue':
+                    blue_pid_value = self.blue_pid.update(int(read_packet[1]))
+                    blue_pwm_value = LEDModel.get_blue_pwm(blue_pid_value)
+                    blue_output = "{0}: {1}, {2}, {3}, {4}".format(key,
+                                                              time.time() - start_time_ref, int(read_packet[1]),
+                                                              blue_pid_value,
+                                                              blue_pwm_value)
+                    print blue_output
+                    self.led.update_value_blue(blue_pwm_value)
+            except Exception as e:
+                print e
+                # exception probably caused by reading, sleep to give some time to update
+                # time.sleep(0.1)
+                pass
+
+    def update_rgb_pid_point(self, red, green, blue, test_mode=False):
+        if test_mode:
+            if red is not None:
+                self.red_pid.set_point(red)
+            if green is not None:
+                self.green_pid.set_point(green)
+            if blue is not None:
+                self.blue_pid.set_point(blue)
+        else:
+            if red is not None:
+                self.red_pid.set_point(LEDModel.get_red_lux(red))
+            if green is not None:
+                self.green_pid.set_point(LEDModel.get_green_lux(green))
+            if blue is not None:
+                self.blue_pid.set_point(LEDModel.get_blue_lux(blue))
+        self.do_three_thread_init()
+
+    def update_red_pid_point(self, red_point, test_mode=False):
+        if test_mode:
+            self.red_pid.set_point(red_point)
+        else:
+            self.red_pid.set_point(LEDModel.get_red_lux(red_point))
+        self.do_three_thread_init()
+
+    def update_green_pid_point(self, green_point, test_mode=False):
+        if test_mode:
+            self.green_pid.set_point(green_point)
+        else:
+            self.green_pid.set_point(LEDModel.get_green_lux(green_point))
+        self.do_three_thread_init()
+
+    def update_blue_pid_point(self, blue_point, test_mode=False):
+        if test_mode:
+            self.blue_pid.set_point(blue_point)
+        else:
+            self.blue_pid.set_point(LEDModel.get_blue_lux(blue_point))
+        self.do_three_thread_init()
+
+    def do_three_thread_init(self):
+        if self.mode == AUTO:
+            self.automatic_mode_thread.join()
+        if not self.mode == AUTO_3:
+            self.mode = AUTO_3
+            self._init_three_thread()
 
     def update_pid_point(self, point, test_mode=False):
         if test_mode:
             self.pid.set_point(point)
         else:
             self.pid.set_point(LEDModel.get_lux(point))
+        if self.mode == AUTO_3:
+            self.automatic_mode_three_thread.join()
         if not self.mode == AUTO:
             self.mode = AUTO
             self._init_thread()
-
 
     def update_manual(self, rgb_value):
         if not self.mode == MANUAL:
             self.mode = MANUAL
             self.automatic_mode_thread.join()
+        if self.mode == AUTO_3:
+            self.automatic_mode_three_thread.join()
         if self.mode == MANUAL:
             self.led.update_rgb(rgb_value)
 
@@ -78,14 +181,19 @@ class Controller(object):
         if not self.mode == MANUAL:
             self.mode = MANUAL
             self.automatic_mode_thread.join()
+        if self.mode == AUTO_3:
+            self.automatic_mode_three_thread.join()
         if self.mode == MANUAL:
             self.led.update_rgb_tuple(rgb_tuple)
 
-
     def stop(self):
         self.mode = MANUAL
-        if self.automatic_mode_thread.isAlive():
-            self.automatic_mode_thread.join(0.01)
+        try:
+            if self.automatic_mode_thread.isAlive():
+                self.automatic_mode_thread.join(0.01)
+        except Exception as e:
+            print e
+            pass
 
     # Identification methods
     def only_measure_thread(self, repeats):
@@ -133,14 +241,13 @@ class Controller(object):
                 print e
                 pass
 
-
     def single_loop(self):
         i = 0
         start_time = time.time()
         while i < 255:
             try:
                 self.led.update_all(i)
-                time.sleep(0.5)
+                # time.sleep(0.5)
                 measured_value = int(self.sensor_reader.handle_reading(self.sensor_reader.readline())[1])
                 output = "{}, {}, {}".format(time.time() - start_time, i, measured_value)
                 print output
@@ -168,10 +275,62 @@ class Controller(object):
                 print e
                 pass
 
+    def stairs_colors(self):
+        i = 0
+        self.led.update_all(0);
+        start_time = time.time()
+        print "Start iterating..."
+        while i < 255:
+            try:
+                self.led.update_rgb_tuple((i, 0, 0))
+                # time.sleep(0.5)
+                measured_value = int(self.sensor_reader.handle_reading(self.sensor_reader.readline())[1])
+                output = "{}, {}, {}".format(time.time() - start_time, i, measured_value)
+                print output
+                self.output_file.write(output + "\n")
+                i += 1
+            except Exception as e:
+                print e
+                pass
+        i = 0
+        while i < 255:
+            try:
+                self.led.update_rgb_tuple((0, i, 0))
+                # time.sleep(0.5)
+                measured_value = int(self.sensor_reader.handle_reading(self.sensor_reader.readline())[1])
+                output = "{}, {}, {}".format(time.time() - start_time, i, measured_value)
+                print output
+                self.output_file.write(output + "\n")
+                i += 1
+            except Exception as e:
+                print e
+                pass
+        i = 0
+        while i < 255:
+            try:
+                self.led.update_rgb_tuple((0, 0, i))
+                # time.sleep(0.5)
+                measured_value = int(self.sensor_reader.handle_reading(self.sensor_reader.readline())[1])
+                output = "{}, {}, {}".format(time.time() - start_time, i, measured_value)
+                print output
+                self.output_file.write(output + "\n")
+                i += 1
+            except Exception as e:
+                print e
+                pass
+
+
 # testing purposes
 if __name__ == "__main__":
 
+    # rpi
     sr = SensorReader('/dev/ttyUSB0', 115200)
+
+    # red/4
+    # sr = SensorReader('/dev/tty.usbserial-MFU7XGR7', 115200)
+
+    # blue/7
+    # sr = SensorReader('/dev/tty.usbserial-MFUD5O75', 115200)
     # sr.start_reading()
     led = LED()
     out_file = open(time.strftime('%Y%m%d-%H%M%S') + ".csv", "w")
@@ -192,11 +351,26 @@ if __name__ == "__main__":
                 elif arg == "single_led":
                     print "measure on single thread selected"
                     controller.single_measure_led(100, 255)
+                elif arg == "colors":
+                    print "colors stairs mode"
+                    controller.stairs_colors()
+                elif arg == "3":
+                    print "3 channel pid model"
+                    # TODO pid 3 channel
         else:
-            controller.update_pid_point(300, True)
+            print "starting 3 channel pid"
+            # controller.update_rgb_pid_point(200, 300, 300, test_mode=True)
+            controller.update_red_pid_point(200, True)
+            controller.update_green_pid_point(300, True)
+            controller.update_blue_pid_point(300, True)
+            # controller.update_pid_point(300, True)
+
             # somehow this works
             while True:
+                print "sleep"
                 time.sleep(100)
+    except Exception as e:
+        print e
     finally:
         print "done"
         out_file.close()
