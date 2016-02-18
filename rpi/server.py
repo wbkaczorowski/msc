@@ -34,6 +34,7 @@ class RPiServer(object):
             factory = WebSocketServerFactory()
             factory.protocol = RPiServerProtocol
             factory.protocol.controller = light_controller
+            light_controller._init_read_thread()
             broadcast_task = task.LoopingCall(self.broadcast, factory)
             broadcast_task.start(self.broadcast_frequency)
             reactor.listenTCP(self.port, factory)

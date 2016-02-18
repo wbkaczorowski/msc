@@ -11,17 +11,18 @@ import android.util.SparseArray;
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
 	private SparseArray<String> fragmentNames;
-	private final int fragmentsNumber = 4;
+	private final int fragmentsNumber = 5;
 
 	private Communicator communicator;
 
 	public SectionsPagerAdapter(FragmentManager fm, Context context, Communicator communicator) {
 		super(fm);
 		fragmentNames = new SparseArray<String>();
-		fragmentNames.put(0, context.getString(R.string.colors_rbg_fragment));
-		fragmentNames.put(1, context.getString(R.string.light_fragment));
-		fragmentNames.put(2, context.getString(R.string.temperature_fragment));
-		fragmentNames.put(3, context.getString(R.string.devices_section_title));
+		fragmentNames.put(0, context.getString(R.string.sensors_fragment));
+		fragmentNames.put(1, context.getString(R.string.colors_rbg_fragment));
+		fragmentNames.put(2, context.getString(R.string.light_fragment));
+		fragmentNames.put(3, context.getString(R.string.temperature_fragment));
+		fragmentNames.put(4, context.getString(R.string.devices_section_title));
 
 		this.communicator = communicator;
 	}
@@ -30,16 +31,17 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 	public Fragment getItem(int position) {
 		switch (position) {
 		case 0:
+			return new SensorsFragment(communicator);
+		case 1:
 			RGBFragment rgbFragment = new RGBFragment(communicator);
 			communicator.setRgbFragment(rgbFragment);
 			return rgbFragment;
-		case 1:
-			return new LightFragment(communicator);
 		case 2:
-			return new TemperatureFragment(communicator);
+			return new LightFragment(communicator);
 		case 3:
+			return new TemperatureFragment(communicator);
+		case 4:
 			return new DevicesFragment(communicator);
-
 		default:
 			return DefaultFragment.newInstance(position + 1);
 		}

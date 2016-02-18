@@ -32,7 +32,7 @@ class Controller(object):
         self.blue_pid = PID(0.495, 0.594, 0.0, MIN_VALUE, 70, 0)
 
         # self.pid = PID(2.0, 0.0, 0.0, MIN_VALUE, MAX_VALUE, 0)
-
+        self.last_reads = {}
         self.mode = MANUAL
 
     def _init_thread(self):
@@ -42,6 +42,10 @@ class Controller(object):
     def _init_three_thread(self):
         self.automatic_mode_three_thread = threading.Thread(target=self.start_three_channel)
         self.automatic_mode_three_thread.start()
+
+    def _init_read_thread(self):
+        self.read_thread = threading.Thread(target=self.start_read_thread)
+        self.read_thread.start()
 
     def start_automatic(self):
         start_time_ref = time.time()
@@ -87,6 +91,12 @@ class Controller(object):
                                                               red_pwm_value)
                     print red_output
                     self.led.update_value_red(red_pwm_value)
+                    try:
+                        self.output_file.write(red_output + "\n")
+                        # self.database.insert_into_control_table(measured_value, pid_value)
+                    except:
+                        # does not matter if saving exists
+                        pass
                 elif key == 'green':
                     green_pid_value = self.green_pid.update(int(read_packet[1]))
                     green_pwm_value = LEDModel.get_green_pwm(green_pid_value)
@@ -96,6 +106,12 @@ class Controller(object):
                                                               green_pwm_value)
                     print green_output
                     self.led.update_value_green(green_pwm_value)
+                    try:
+                        self.output_file.write(green_output + "\n")
+                        # self.database.insert_into_control_table(measured_value, pid_value)
+                    except:
+                        # does not matter if saving exists
+                        pass
                 elif key == 'blue':
                     blue_pid_value = self.blue_pid.update(int(read_packet[1]))
                     blue_pwm_value = LEDModel.get_blue_pwm(blue_pid_value)
@@ -105,11 +121,28 @@ class Controller(object):
                                                               blue_pwm_value)
                     print blue_output
                     self.led.update_value_blue(blue_pwm_value)
+                    try:
+                        self.output_file.write(blue_output + "\n")
+                        # self.database.insert_into_control_table(measured_value, pid_value)
+                    except:
+                        # does not matter if saving exists
+                        pass
             except Exception as e:
                 print e
                 # exception probably caused by reading, sleep to give some time to update
                 # time.sleep(0.1)
                 pass
+
+    def start_read_thread(self):
+        while self.mode == MANUAL:
+            try:
+                read_packet = self.sensor_reader.handle_reading(self.sensor_reader.readline())
+                self.last_reads[read_packet[0]] = read_packet[1]
+                print self.last_reads
+            except Exception as e:
+                # print e
+                pass
+
 
     def update_rgb_pid_point(self, red, green, blue, test_mode=False):
         if test_mode:
@@ -150,6 +183,12 @@ class Controller(object):
         self.do_three_thread_init()
 
     def do_three_thread_init(self):
+        try:
+            if self.read_thread is not None and self.read_thread.isAlive():
+                self.read_thread.join(0.01)
+        except Exception as e:
+            print e
+            pass
         if self.mode == AUTO:
             self.automatic_mode_thread.join()
         if not self.mode == AUTO_3:
@@ -157,6 +196,12 @@ class Controller(object):
             self._init_three_thread()
 
     def update_pid_point(self, point, test_mode=False):
+        try:
+            if self.read_thread is not None and self.read_thread.isAlive():
+                self.read_thread.join(0.01)
+        except Exception as e:
+            print e
+            pass
         if test_mode:
             self.pid.set_point(point)
         else:
@@ -172,9 +217,12 @@ class Controller(object):
             self.mode = MANUAL
             self.automatic_mode_thread.join()
         if self.mode == AUTO_3:
+            self.mode = MANUAL
             self.automatic_mode_three_thread.join()
         if self.mode == MANUAL:
             self.led.update_rgb(rgb_value)
+            self._init_read_thread()
+
 
     def update_temp(self, temp_value):
         rgb_tuple = TempModel.get_rgb(temp_value)
@@ -185,17 +233,33 @@ class Controller(object):
             self.automatic_mode_three_thread.join()
         if self.mode == MANUAL:
             self.led.update_rgb_tuple(rgb_tuple)
+            self._init_read_thread()
 
     def stop(self):
         self.mode = MANUAL
         try:
-            if self.automatic_mode_thread.isAlive():
+            if self.automatic_mode_thread is not None and self.automatic_mode_thread.isAlive():
                 self.automatic_mode_thread.join(0.01)
         except Exception as e:
             print e
             pass
-
+        try:
+            if self.automatic_mode_three_thread is not None and self.automatic_mode_three_thread.isAlive():
+                self.automatic_mode_three_thread.join(0.01)
+        except Exception as e:
+            print e
+            pass
+        try:
+            if self.read_thread is not None and self.read_thread.isAlive():
+                self.read_thread.join(0.01)
+        except Exception as e:
+            print e
+            pass
+    #
+    #
     # Identification methods
+    #
+    #
     def only_measure_thread(self, repeats):
         self.sensor_reader.start_reading()
         i = 0
@@ -359,11 +423,11 @@ if __name__ == "__main__":
                     # TODO pid 3 channel
         else:
             print "starting 3 channel pid"
-            # controller.update_rgb_pid_point(200, 300, 300, test_mode=True)
-            controller.update_red_pid_point(200, True)
-            controller.update_green_pid_point(300, True)
-            controller.update_blue_pid_point(300, True)
-            # controller.update_pid_point(300, True)
+            controller.update_rgb_pid_point(30, 8, 30, test_mode=True)
+            # controller.update_red_pid_point(200, True)
+            # controller.update_green_pid_point(300, True)
+            # controller.update_blue_pid_point(300, True)
+            # controller.update_pid_point(250, True)
 
             # somehow this works
             while True:

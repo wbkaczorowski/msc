@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import pl.edu.pw.elka.appled.Config;
 import pl.edu.pw.elka.appled.fragments.DeviceRowAdapter;
 import pl.edu.pw.elka.appled.fragments.RGBFragment;
+import pl.edu.pw.elka.appled.fragments.SensorsFragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -19,15 +20,14 @@ import de.tavendo.autobahn.WebSocketHandler;
 public class Communicator {
 
 	private Context context;
-
 	private long lastToastTime;
-
 	public static final String TAG = "Communicator";
 
 	// TODO to żeby w threadpoola puścic jakiegoś
 	private LinkedList<WebSocketConnection> connectedDevices = new LinkedList<>();
 
 	private RGBFragment rgbFragment;
+	private SensorsFragment sensorsFragment;
 
 	public Communicator(Context context) {
 		this.context = context;
@@ -109,10 +109,15 @@ public class Communicator {
 					@Override
 					public void onTextMessage(String payload) {
 						Log.d(TAG, "Recieved message: " + payload);
-						if (rgbFragment != null) {
-							int color = Data.colorFromJson(payload);
-							rgbFragment.setChosenColor(color);
-							rgbFragment.updateColorInApp(color);
+						if (Data.isLightJson(payload)) {
+							JSONObject json = Data.parseLightJson(payload);
+							sensorsFragment.addData(json.optString("key"), json.optString("value"));
+						} else {
+							if (rgbFragment != null) {
+								int color = Data.colorFromJson(payload);
+								rgbFragment.setChosenColor(color);
+								rgbFragment.updateColorInApp(color);
+							}
 						}
 					}
 
@@ -171,6 +176,10 @@ public class Communicator {
 
 	public void setRgbFragment(RGBFragment rgbFragment) {
 		this.rgbFragment = rgbFragment;
+	}
+
+	public void setSensorsFragment(SensorsFragment sensorsFragment) {
+		this.sensorsFragment = sensorsFragment;
 	}
 
 }

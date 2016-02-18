@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">AppLED</string>
+    <string name="sensors_fragment">Sensors</string>
     <string name="colors_rbg_fragment">Manual</string>
     <string name="light_fragment">Automatic</string>
     <string name="temperature_fragment">Temperature</string>
