@@ -56,7 +56,7 @@ class SensorReader(object):
 
     def handle_reading(self, state):
         splited = state.strip().split(':')
-        if len(splited) == 2 and splited[0].isdigit() and splited[1].isdigit():
+        if len(splited) == 2 and splited[0].isdigit() and splited[1].isdigit() and len(splited[0]) == 1:
             return splited
 
     def close(self):

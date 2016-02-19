@@ -48,6 +48,7 @@ public class SensorsFragment extends Fragment {
 
 	public void addData(String key, String data) {
 		lineGraph.addNewPoints(key, new Point(dataCounter.getAndIncrement(), Integer.parseInt(data)));
+		graphView.repaint();
 	}
 	
 	private void addData() {

@@ -74,7 +74,7 @@ public class LineGraph {
 		mr.setMarginsColor(Color.parseColor("#fff3f3f3"));
 		mr.setAntialiasing(true);
 		
-		mr.setZoomButtonsVisible(true);
+		mr.setZoomButtonsVisible(false);
 
 	}
 

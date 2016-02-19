@@ -56,15 +56,17 @@ class RPiServerProtocol(WebSocketServerProtocol):
 
     def start_read_thread(self):
         print "statrting read thread"
+        allowed_keys = ["4", "6", "7"]
         while self.connected_client:
             try:
                 dict = self.controller.last_reads
                 for key in dict:
-                    payload = {'light': {'key': key, 'value': dict[key]}}
-                    print payload
-                    self.sendMessage(json.dumps(payload).encode('utf-8'))
+                    if key in allowed_keys:
+                        payload = {'light': {'key': key, 'value': dict[key]}}
+                        print payload
+                        self.sendMessage(json.dumps(payload).encode('utf-8'))
                 print "Go to sleep"
-                time.sleep(1)
+                time.sleep(0.5)
             except Exception as e:
                 print e
                 pass
