@@ -255,6 +255,13 @@ class Controller(object):
         except Exception as e:
             print e
             pass
+
+    def get_temp_rgb_lux(self, temp):
+        tup = TempModel.get_rgb(temp)
+        red = LEDModel.get_red_lux(tup[0])
+        green = LEDModel.get_green_lux(tup[1])
+        blue = LEDModel.get_blue_lux(tup[2])
+        return red, green, blue
     #
     #
     # Identification methods
@@ -423,7 +430,8 @@ if __name__ == "__main__":
                     # TODO pid 3 channel
         else:
             print "starting 3 channel pid"
-            controller.update_rgb_pid_point(30, 8, 30, test_mode=True)
+            rgb_tuple = controller.get_temp_rgb_lux(6000)
+            controller.update_rgb_pid_point(rgb_tuple[0], rgb_tuple[1], rgb_tuple[2], test_mode=True)
             # controller.update_red_pid_point(200, True)
             # controller.update_green_pid_point(300, True)
             # controller.update_blue_pid_point(300, True)
