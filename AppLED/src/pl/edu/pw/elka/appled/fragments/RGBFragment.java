@@ -69,7 +69,6 @@ public class RGBFragment extends Fragment {
 
 	public void updateColor(int color) {
 		updateColorInApp(color);
-		// TODO wysyłanie tutaj?
 		// TODO a może nie wysyłac wszystkich tylko co x ms?
 		communicator.sendData(Data.color(Integer.toHexString(color).substring(2)));
 	}

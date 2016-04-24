@@ -23,7 +23,6 @@ public class Communicator {
 	private long lastToastTime;
 	public static final String TAG = "Communicator";
 
-	// TODO to żeby w threadpoola puścic jakiegoś
 	private LinkedList<WebSocketConnection> connectedDevices = new LinkedList<>();
 
 	private RGBFragment rgbFragment;
@@ -61,14 +60,12 @@ public class Communicator {
 		return new ServerFinderTask(this.context, adapter);
 	}
 
-	// TODO pozmieniać asynki to wszystko (threadpool jakiś?)
 	private class SendDataTask extends AsyncTask<String, Void, Void> {
 
 		@Override
 		protected Void doInBackground(String... params) {
 			String data = params[0];
 
-			// TODO to żeby w threadpoola puścic jakiegoś
 			if (connectedDevices.size() < 1) {
 				// toast tutaj
 			} else {
@@ -143,7 +140,6 @@ public class Communicator {
 		@Override
 		protected Void doInBackground(String... params) {
 
-			// TODO zeby na jedym wylaczalo
 			for (WebSocketConnection wsc : connectedDevices) {
 				if (wsc.isConnected()) {
 					wsc.disconnect();
@@ -161,7 +157,6 @@ public class Communicator {
 		@Override
 		protected Void doInBackground(Void... params) {
 
-			// TODO to żeby w threadpoola puścic jakiegoś
 			for (WebSocketConnection wsc : connectedDevices) {
 				if (wsc.isConnected()) {
 					wsc.disconnect();

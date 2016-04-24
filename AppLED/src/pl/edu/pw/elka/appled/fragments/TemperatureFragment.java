@@ -56,7 +56,6 @@ public class TemperatureFragment extends Fragment {
     public void updateColor(int value) {
     	int colorValue = TemperatureModel.getRGBToColor(value);
         updateColorInApp(colorValue, value);
-        //TODO wysyłanie tutaj?
         //TODO a może nie wysyłac wszystkich tylko co x ms?
         communicator.sendData(Data.temperature(value));
     }

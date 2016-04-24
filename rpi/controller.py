@@ -26,7 +26,6 @@ class Controller(object):
 
         self.pid = PID(0.495, 0.594, 0.0, MIN_VALUE, MAX_VALUE, 0)
 
-        # TODO maxy i miny ustawic
         self.red_pid = PID(0.495, 0.594, 0.0, MIN_VALUE, 65, 0)
         self.green_pid = PID(0.495, 0.594, 0.0, MIN_VALUE, 80, 0)
         self.blue_pid = PID(0.495, 0.594, 0.0, MIN_VALUE, 70, 0)
@@ -221,7 +220,9 @@ class Controller(object):
             self.automatic_mode_three_thread.join()
         if self.mode == MANUAL:
             self.led.update_rgb(rgb_value)
-            self._init_read_thread()
+            if self.read_thread is None or not self.read_thread.isAlive():
+                self._init_read_thread()
+
 
 
     def update_temp(self, temp_value):
@@ -233,7 +234,8 @@ class Controller(object):
             self.automatic_mode_three_thread.join()
         if self.mode == MANUAL:
             self.led.update_rgb_tuple(rgb_tuple)
-            self._init_read_thread()
+            if self.read_thread is None or not self.read_thread.isAlive():
+                self._init_read_thread()
 
     def stop(self):
         self.mode = MANUAL
@@ -430,12 +432,12 @@ if __name__ == "__main__":
                     # TODO pid 3 channel
         else:
             print "starting 3 channel pid"
-            rgb_tuple = controller.get_temp_rgb_lux(6000)
-            controller.update_rgb_pid_point(rgb_tuple[0], rgb_tuple[1], rgb_tuple[2], test_mode=True)
-            # controller.update_red_pid_point(200, True)
-            # controller.update_green_pid_point(300, True)
-            # controller.update_blue_pid_point(300, True)
-            # controller.update_pid_point(250, True)
+            # rgb_tuple = controller.get_temp_rgb_lux(6000)
+            # controller.update_rgb_pid_point(rgb_tuple[0], rgb_tuple[1], rgb_tuple[2], test_mode=True)
+            controller.update_red_pid_point(30, True)
+            controller.update_green_pid_point(8, True)
+            controller.update_blue_pid_point(30, True)
+            # controller.update_pid_point(80, True)
 
             # somehow this works
             while True:

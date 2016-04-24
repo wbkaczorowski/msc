@@ -55,7 +55,6 @@ public class LightFragment extends Fragment {
     
     public void updateColor(int value) {
         updateColorInApp(value);
-        //TODO wysyłanie tutaj?
         //TODO a może nie wysyłac wszystkich tylko co x ms?
         communicator.sendData(Data.light(value));
     }

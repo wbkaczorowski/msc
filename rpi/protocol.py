@@ -12,7 +12,6 @@ class RPiServerProtocol(WebSocketServerProtocol):
 
     def onOpen(self):
         print("WebSocket connection open.")
-        # TODO odsylanie aktualnej na telefon
         # print self.controller.current_RGB
         # payload = {'color': self.controller.led.current_RGB}
         # print payload

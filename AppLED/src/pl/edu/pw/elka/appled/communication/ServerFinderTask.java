@@ -61,7 +61,6 @@ public class ServerFinderTask extends AsyncTask<Void, Void, Map<String, String>>
     @Override
     protected void onProgressUpdate(Void... values) {
         super.onProgressUpdate(values);
-        // TODO zeby dodawalo na zywo nowe rpi
     }
 
 
